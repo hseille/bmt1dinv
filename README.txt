@@ -1,1 +1,24 @@
-BMT1Dinv
+BMT1Dinv: 1D Bayesian inversion of magnetotelluric data considering model discrepancy
+
+Description
+BMT1Dinv is a software for analysing, inverting and vizualizing magnetotelluric (MT) data and probabilistic models.  
+
+How to Cite
+If you use this software in a scientific publication, please cite the following papers:
+
+Seillé, H., & Visser, G. (2020). Bayesian inversion of magnetotelluric data considering dimensionality discrepancies. Geophysical Journal International, 223(3), 1565–1583. https://doi.org/10.1093/gji/ggaa391
+
+Home Page: https://bitbucket.csiro.au/scm/~sei029/bmt1dinv.git
+
+
+Authors
+Hoël Seillé
+hoel.seille@csiro.au
+Gerhard Visser
+gerhard.visser@csiro.au
+
+System Requirements
+Python 3.6+
+
+License
+BMT1Dinv is licensed under the GPL version 3
