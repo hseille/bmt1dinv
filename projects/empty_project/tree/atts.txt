@@ -1,0 +1,15 @@
+1,'elip1',elip > 0.1
+2,'elip2',elip > 0.2
+3,'elip3',elip > 0.3
+4,'elip4',elip > 0.4
+5,'elip5',elip > 0.5
+6,'elip7',elip > 0.75
+7,'beta1',abs(beta) > 1
+8,'beta2',abs(beta) > 2
+9,'beta3',abs(beta) > 3
+10,'beta5',abs(beta) > 5
+11,'beta7',abs(beta) > 7
+12,'beta9',abs(beta) > 9
+13,'difPol1',difPol > 0.1
+14,'difPol3',difPol > 0.3
+15,'difPol5',difPol > 0.5
