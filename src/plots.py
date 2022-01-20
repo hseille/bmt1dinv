@@ -8,11 +8,12 @@
 __author__ = "Hoël Seillé / Gerhard Visser"
 __copyright__ = "Copyright 2020, CSIRO"
 __credits__ = ["Hoël Seillé / Gerhard Visser"]
-__license__ = "GPL"
+__license__ = "GPLv3"
 __version__ = "1.0.0"
 __maintainer__ = "Hoël Seillé"
 __email__ = "hoel.seille@csiro.au"
 __status__ = "Beta"
+
 
 
 #Plotting tools
@@ -69,11 +70,21 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
         logERR_1D = ((np.log10(rho1D+drho1D)-np.log10(rho1D-drho1D)))*0.5
         
         plt.subplot(10,1,(1,3))
-        plt.errorbar(np.log10(1/f), np.log10(rhoXX), yerr = logERR_xx, fmt='m.',label= 'xx',zorder=32, elinewidth=1,markersize=5, alpha=0.3)
-        plt.errorbar(np.log10(1/f), np.log10(rhoXY), yerr = logERR_xy, fmt='r.',label= 'xy',zorder=32, elinewidth=1,markersize=5)
-        plt.errorbar(np.log10(1/f), np.log10(rhoYX), yerr = logERR_yx, fmt='b.',label= 'yx',zorder=32, elinewidth=1,markersize=5)
-        plt.errorbar(np.log10(1/f), np.log10(rhoYY), yerr = logERR_yy, fmt='g.',label= 'yy',zorder=32, elinewidth=1,markersize=5, alpha=0.3)
-        plt.errorbar(np.log10(1/f), np.log10(rho1D), yerr = logERR_1D, fmt='k.',label= 'det',zorder=1, elinewidth=1,markersize=5, capsize=0,alpha=0.5)
+        plt.errorbar(np.log10(1/f), np.log10(rhoXX), 
+                     yerr = logERR_xx, fmt='m.',label= 'xx',zorder=32, 
+                     elinewidth=1,markersize=5, alpha=0.3)
+        plt.errorbar(np.log10(1/f), np.log10(rhoXY), 
+                     yerr = logERR_xy, fmt='r.',label= 'xy',zorder=32, 
+                     elinewidth=1,markersize=5)
+        plt.errorbar(np.log10(1/f), np.log10(rhoYX), 
+                     yerr = logERR_yx, fmt='b.',label= 'yx',zorder=32, 
+                     elinewidth=1,markersize=5)
+        plt.errorbar(np.log10(1/f), np.log10(rhoYY), 
+                     yerr = logERR_yy, fmt='g.',label= 'yy',zorder=32, 
+                     elinewidth=1,markersize=5, alpha=0.3)
+        plt.errorbar(np.log10(1/f), np.log10(rho1D), 
+                     yerr = logERR_1D, fmt='k.',label= 'det',zorder=1, 
+                     elinewidth=1,markersize=5, capsize=0,alpha=0.5)
         plt.ylabel('Log$_{10}$ $\\rho_{app}$ ($\Omega$.m)')
         plt.title('%s'%(site_id),fontsize=10)
         #plt.tick_params(axis='x',labelbottom='off')
@@ -85,11 +96,21 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
         
         
         plt.subplot(10,1,(4,6))
-        plt.errorbar(np.log10(1/f), phyXX, yerr = dphyXX, fmt='m.',zorder=32, elinewidth=1,markersize=5,  alpha=0.3)
-        plt.errorbar(np.log10(1/f), phyXY, yerr = dphyXY, fmt='r.',zorder=32, elinewidth=1,markersize=5)
-        plt.errorbar(np.log10(1/f), phyYX, yerr = dphyYX, fmt='b.',zorder=32, elinewidth=1,markersize=5, )
-        plt.errorbar(np.log10(1/f), phyYY, yerr = dphyYY, fmt='g.',zorder=32, elinewidth=1,markersize=5, alpha=0.3)
-        plt.errorbar(np.log10(1/f), phy1D, yerr = dphy1D, fmt='k.',zorder=1, elinewidth=1,markersize=5, capsize=0,alpha=0.5)
+        plt.errorbar(np.log10(1/f), phyXX, 
+                     yerr = dphyXX, fmt='m.',zorder=32, 
+                     elinewidth=1,markersize=5,  alpha=0.3)
+        plt.errorbar(np.log10(1/f), phyXY, 
+                     yerr = dphyXY, fmt='r.',zorder=32, 
+                     elinewidth=1,markersize=5)
+        plt.errorbar(np.log10(1/f), phyYX, 
+                     yerr = dphyYX, fmt='b.',zorder=32, 
+                     elinewidth=1,markersize=5, )
+        plt.errorbar(np.log10(1/f), phyYY, 
+                     yerr = dphyYY, fmt='g.',zorder=32, 
+                     elinewidth=1,markersize=5, alpha=0.3)
+        plt.errorbar(np.log10(1/f), phy1D, 
+                     yerr = dphy1D, fmt='k.',zorder=1, 
+                     elinewidth=1,markersize=5, capsize=0,alpha=0.5)
         plt.ylabel('Phase (degrees)')
         #plt.title('PHASE',fontsize=10)
         plt.grid(linestyle=':')
@@ -100,8 +121,10 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
         
         plt.subplot(10,1,(7,8))
         #plt.plot(logT,beta, 'k.')
-        plt.errorbar(np.log10(1/f), beta, yerr = 2*beta_err, fmt='k.', elinewidth=1,markersize=7)
-        plt.plot(np.log10(1/f), beta_filt, 'r-', zorder=32, label="Median Filter")
+        plt.errorbar(np.log10(1/f), beta, 
+                     yerr = 2*beta_err, fmt='k.', elinewidth=1,markersize=7)
+        plt.plot(np.log10(1/f), beta_filt, 
+                 'r-', zorder=32, label="Median Filter")
         plt.ylabel('$\\beta$ (degrees)')
         plt.grid(linestyle=':')
         plt.axhline(y=3, linestyle='-', color='grey')
@@ -112,8 +135,10 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
         plt.title('PHASE TENSOR $\\beta$',fontsize=10)
         
         plt.subplot(10,1,(9,10))
-        plt.errorbar(np.log10(1/f), ellip, yerr = 2*ellip_err, fmt='k.', elinewidth=1,markersize=7)
-        plt.plot(np.log10(1/f), ellip_filt, 'r-', zorder=32, label="Median Filter")
+        plt.errorbar(np.log10(1/f), ellip, 
+                     yerr = 2*ellip_err, fmt='k.', elinewidth=1,markersize=7)
+        plt.plot(np.log10(1/f), ellip_filt, 
+                 'r-', zorder=32, label="Median Filter")
         plt.xlabel('Log$_{10}$ Period (sec)')
         plt.ylabel('$\\lambda$')
         plt.grid(linestyle=':')
@@ -129,8 +154,12 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
     #TO PLOT IMPEDANCES!!!  uncomment
     else:
         plt.subplot(10,1,(1,3))
-        plt.errorbar(np.log10(1/f), np.log(Z['ZXYR'].values), yerr = np.log(1+((1*((Z['ZXY.VAR'])**0.5))/Z['ZXYR'].values)), fmt='r.',label= 'Zxy',zorder=32, elinewidth=1,markersize=7)
-        plt.errorbar(np.log10(1/f), np.log(-Z['ZYXR'].values), yerr =  np.log(1+((1*((-Z['ZXY.VAR'])**0.5))/Z['ZYXR'].values)), fmt='b.',label= 'Zyx',zorder=32, elinewidth=1,markersize=7)
+        plt.errorbar(np.log10(1/f), np.log(Z['ZXYR'].values), 
+                     yerr = np.log(1+((1*((Z['ZXY.VAR'])**0.5))/Z['ZXYR'].values)), 
+                     fmt='r.',label= 'Zxy',zorder=32, elinewidth=1,markersize=7)
+        plt.errorbar(np.log10(1/f), np.log(-Z['ZYXR'].values), 
+                     yerr =  np.log(1+((1*((-Z['ZXY.VAR'])**0.5))/Z['ZYXR'].values)), 
+                     fmt='b.',label= 'Zyx',zorder=32, elinewidth=1,markersize=7)
         plt.ylabel('Log Zr ($\Omega$)')
         plt.title('IMPEDANCE Z (Re)',fontsize=10)
         #plt.tick_params(axis='x',labelbottom='off')
@@ -139,8 +168,12 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
         plt.legend(fontsize=8)
         
         plt.subplot(10,1,(4,6))
-        plt.errorbar(np.log10(1/f), np.log(Z['ZXYI'].values), yerr =  np.log(1+((1*((Z['ZXY.VAR'])**0.5))/Z['ZXYI'].values)), fmt='r.',label= 'Zxy',zorder=32, elinewidth=1,markersize=7)
-        plt.errorbar(np.log10(1/f), np.log(-Z['ZYXI'].values), yerr =  np.log(1+((1*((-Z['ZXY.VAR'])**0.5))/Z['ZYXI'].values)), fmt='b.',label= 'Zyx',zorder=32, elinewidth=1,markersize=7)
+        plt.errorbar(np.log10(1/f), np.log(Z['ZXYI'].values), 
+                     yerr =  np.log(1+((1*((Z['ZXY.VAR'])**0.5))/Z['ZXYI'].values)), 
+                     fmt='r.',label= 'Zxy',zorder=32, elinewidth=1,markersize=7)
+        plt.errorbar(np.log10(1/f), np.log(-Z['ZYXI'].values), 
+                     yerr =  np.log(1+((1*((-Z['ZXY.VAR'])**0.5))/Z['ZYXI'].values)), 
+                     fmt='b.',label= 'Zyx',zorder=32, elinewidth=1,markersize=7)
         
         plt.ylabel('Log -Zi ($\Omega$)')
         plt.title('IMPEDANCE Z (Im)',fontsize=10)
@@ -150,8 +183,10 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
         
         plt.subplot(10,1,(7,8))
         #plt.plot(logT,beta, 'k.')
-        plt.errorbar(np.log10(1/f), beta, yerr = 2*beta_err, fmt='k.', elinewidth=1,markersize=7)
-        plt.plot(np.log10(1/f), beta_filt, 'r-', zorder=32, label="Median Filter")
+        plt.errorbar(np.log10(1/f), beta, 
+                     yerr = 2*beta_err, fmt='k.', elinewidth=1,markersize=7)
+        plt.plot(np.log10(1/f), beta_filt, 
+                 'r-', zorder=32, label="Median Filter")
         plt.ylabel('$\\beta$ (degrees)')
         plt.grid(linestyle=':')
         plt.axhline(y=3, linestyle='-', color='grey')
@@ -162,8 +197,10 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp, plot_rho=True):
         plt.title('PHASE TENSOR $\\beta$',fontsize=10)
         
         plt.subplot(10,1,(9,10))
-        plt.errorbar(np.log10(1/f), ellip, yerr = 2*ellip_err, fmt='k.', elinewidth=1,markersize=7)
-        plt.plot(np.log10(1/f), ellip_filt, 'r-', zorder=32, label="Median Filter")
+        plt.errorbar(np.log10(1/f), ellip, 
+                     yerr = 2*ellip_err, fmt='k.', elinewidth=1,markersize=7)
+        plt.plot(np.log10(1/f), ellip_filt, 
+                 'r-', zorder=32, label="Median Filter")
         plt.xlabel('Log$_{10}$ Period (sec)')
         plt.ylabel('$\\lambda$')
         plt.grid(linestyle=':')

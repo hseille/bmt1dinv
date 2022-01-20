@@ -28,6 +28,7 @@ max=$P9
 maxChains=$((nChainsTot/nChainsPar))
 #maxChains=1
 
+echo "--------------------------------"
 echo "running 1D transdMT for site "$siteid
 
 # nChainsPar chains at a time (nChainsPar nodes, 1 thread by node)
@@ -77,7 +78,7 @@ cp ${output_dir}/${siteid}CsampResps outfolder/
 rm -r ${output_dir}
 
 
-echo "inversion done."
+echo "inversion done"
 echo "output files saved"
-echo "--------------------------------"
+echo " "
 

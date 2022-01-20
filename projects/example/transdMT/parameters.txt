@@ -1,6 +1,6 @@
 nChainsPar=4
-nChainsTot=20
-runc=1000000
+nChainsTot=4
+runc=200000
 ipfile=ipfile.csv
 gamma=2
 samples=100

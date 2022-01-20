@@ -8,17 +8,16 @@
 __author__ = "Hoël Seillé / Gerhard Visser"
 __copyright__ = "Copyright 2020, CSIRO"
 __credits__ = ["Hoël Seillé / Gerhard Visser"]
-__license__ = "GPL"
+__license__ = "GPLv3"
 __version__ = "1.0.0"
 __maintainer__ = "Hoël Seillé"
 __email__ = "hoel.seille@csiro.au"
 __status__ = "Beta"
 
 
+
 import numpy as np
 import pandas as pd
-
-
 
 
 def readEDI(file_name):
@@ -147,30 +146,18 @@ def phaseTensor(Z):
     
     """   
 
-    if isinstance(Z, pd.DataFrame):
-        freq = Z['FREQ'].values
-        nf = len(freq)
-        X11 = Z['ZXXR'].values
-        Y11 = Z['ZXXI'].values
-        X12 = Z['ZXYR'].values
-        Y12 = Z['ZXYI'].values
-        X21 = Z['ZYXR'].values
-        Y21 = Z['ZYXI'].values
-        X22 = Z['ZYYR'].values
-        Y22 = Z['ZYYI'].values
-        
-    else:
-        freq = Z[:,0]
-        nf = len(freq)
-        
-        ZXXR   = X11 = Z[:,1]
-        ZXXI   = Y11 = Z[:,2]
-        ZXYR   = X12 = Z[:,4]
-        ZXYI   = Y12 = Z[:,5]
-        ZYXR   = X21 = Z[:,7]
-        ZYXI   = Y21 = Z[:,8]
-        ZYYR   = X22 = Z[:,10]
-        ZYYI   = Y22 = Z[:,11]
+    assert isinstance(Z, pd.DataFrame), 'Wrong input data format... aborted'
+    
+    freq = Z['FREQ'].values
+    nf = len(freq)
+    X11 = Z['ZXXR'].values
+    Y11 = Z['ZXXI'].values
+    X12 = Z['ZXYR'].values
+    Y12 = Z['ZXYI'].values
+    X21 = Z['ZYXR'].values
+    Y21 = Z['ZYXI'].values
+    X22 = Z['ZYYR'].values
+    Y22 = Z['ZYYI'].values
 
 
     #loop over each frequency 
@@ -233,21 +220,18 @@ def phaseTensorErr(Z,MC_realizations = 10000):
     """   
         
     from scipy.stats import norm
-    import sys
-
     
     freq = Z['FREQ'].values
     nf = len(freq)
     
     Z_MC = np.zeros((MC_realizations,12, len(freq)))
-    #PT_MC = np.zeros((MC_realizations,2, len(freq)))
     ph_tens_MC = np.zeros((MC_realizations,4,len(freq)))
     ph_params_MC  = np.zeros((MC_realizations,6,len(freq)))
     
     ph_tens_std = np.zeros((len(freq),4))
     ph_params_std  = np.zeros((len(freq),6))
-    #For each frequency:
     
+    #For each frequency:
     for f in range(nf):
     
         Z_MC[:,0,f] = freq[f]
@@ -260,8 +244,7 @@ def phaseTensorErr(Z,MC_realizations = 10000):
         Z_MC[:,8,f] = np.random.normal(Z['ZYXI'][f], (Z['ZYX.VAR'][f])**0.5, MC_realizations)
         Z_MC[:,10,f] = np.random.normal(Z['ZYYR'][f], (Z['ZYY.VAR'][f])**0.5, MC_realizations)
         Z_MC[:,11,f] = np.random.normal(Z['ZYYI'][f], (Z['ZYY.VAR'][f])**0.5, MC_realizations)
-    
-    
+
         ph_tens, ph_params = phaseTensor(Z_MC[:,:,f])
 
         ph_tens_MC[:,:,f] = ph_tens[:,1:]
@@ -378,7 +361,7 @@ def Zdet(Z):
 
 def keepMax(x):
     # For the attributes we use the highest value encountered 
-    # as a minimum value (see paper)
+    # as a minimum value (see Seille & Visser GJI 2020)
     for i in range(1,len(x)):
         if abs(x[i])>abs(x[i-1]):
             x[i] = abs(x[i])
@@ -402,7 +385,6 @@ def getData(edi_file_path, medfiltsp):
     Z.loc[:,['ZXX.VAR','ZXY.VAR','ZYX.VAR','ZYY.VAR']] = Z_orig.loc[:,['ZXX.VAR','ZXY.VAR','ZYX.VAR','ZYY.VAR']] / (C**2)
 
     freq = Z['FREQ']
-    nF = len(freq)
     
     # calculate phase tensor parameters            
     ph_tens, ph_params = phaseTensor(Z)

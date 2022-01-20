@@ -3,7 +3,20 @@
 params=$1
 
 #read transdMT parameters file
-echo 'Inversion parameters:'
+
+
+echo "\n 
+############################################
+##   Trans-dimensional MCMC 1D Inversion  ##
+##        of Magnetotelluric Data         ##
+##                                        ##
+##       Gerhard Visser / Hoël Seillé     ##
+##            CSIRO DEI FSP 2020          ##
+############################################"
+
+
+echo ' '
+echo '\nInversion parameters:'
 while IFS='=' read -r param val
 do
    echo "   $param = $val"
@@ -22,5 +35,6 @@ for file in $input_dir/*.csv; do #loop1
 	bash multithreads.sh $params $siteid $input_dir $output_dir
 done #end loop1
 
-
+echo "goodbye!
+"
 

@@ -8,17 +8,17 @@
 __author__ = "Hoël Seillé / Gerhard Visser"
 __copyright__ = "Copyright 2020, CSIRO"
 __credits__ = ["Hoël Seillé / Gerhard Visser"]
-__license__ = "GPL"
+__license__ = "GPLv3"
 __version__ = "1.0.0"
 __maintainer__ = "Hoël Seillé"
 __email__ = "hoel.seille@csiro.au"
 __status__ = "Beta"
 
+
+
 import pandas as pd
 import numpy as np
 from scipy import linalg
-
-
 
 
 class Dim_Tree():

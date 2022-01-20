@@ -8,13 +8,11 @@
 __author__ = "Hoël Seillé / Gerhard Visser"
 __copyright__ = "Copyright 2020, CSIRO"
 __credits__ = ["Hoël Seillé / Gerhard Visser"]
-__license__ = "GPL"
+__license__ = "GPLv3"
 __version__ = "1.0.0"
 __maintainer__ = "Hoël Seillé"
 __email__ = "hoel.seille@csiro.au"
 __status__ = "Beta"
-
-
 
 
 
@@ -30,44 +28,34 @@ import MT as MT
 import plots as plots
 
 
-arg = sys.argv
-
 print('\n#############################################')
 print('## 1-D Magnetotellurics Bayesian Inversion ##')
 print('##  Dimensionality Discrepancy Estimation  ##')
 print('##       Hoël Seillé / Gerhard Visser      ##')
 print('##          CSIRO DEI FSP   2020           ##')
 print('#############################################\n')
-    
 
 
-assert len(arg) == 5, ('\n\n\
-Script usage:\n python3 ../../src/DDE.py [Error Floor] [median filter] [boolean for plotMTdata] [boolean for saveCSVfiles] \n \
-Example using DDM:python3 ../../src/DDE.py -1 0.2 True True')
 
 
-EF = float(arg[1])
-medfiltsp = float(arg[2])
-plotMTdata = str(arg[3])
-saveCSVfiles = str(arg[4])
+# =============================================================================
+# Define here the files and parameters to use to create the input data
+# =============================================================================
+project = 'example'
+atts_file=r'..\projects\%s\tree\atts.txt'%(project)
+DDMfile = r'..\projects\%s\tree\tree.txt'%(project)
+EF = -1
+medfiltsp = 0.2
+plotMTdata = True
+saveCSVfiles = True
+edi_path = r'..\projects\%s\edi'%(project)
+csv_path = r'..\projects\%s\csv'%(project)
+# =============================================================================
+# 
+# =============================================================================
 
-DDMfile = r'./tree/tree.txt'
-atts_file =r'./tree/atts.txt'
-edi_path =r'./edi/'
-csv_path = r'./csv/'
 
 
-# To use in Spyder (no in command line) -->
-
-#project = 'example'
-#atts_file=r'..\projects\%s\tree\atts.txt'%(project)
-#DDMfile = r'..\projects\%s\tree\tree.txt'%(project)
-#EF = -1
-#medfiltsp = 0.2
-#plotMTdata = True
-#saveCSVfiles = True
-#edi_path = r'..\projects\%s\edi'%(project)
-#csv_path = r'..\projects\%s\csv'%(project)
 
 
 
@@ -77,10 +65,6 @@ atts_dic = tree.readAttsFile(atts_file)
 #read and store the decision tree 
 # tree_file = "/tree/%s"%(DDMfile)
 tr = tree.readTreeFile(DDMfile, atts_dic)
-
-
-
-
 
 print('EDI files folder: ',edi_path)
 # loop over the data files (EDI files)
@@ -109,21 +93,11 @@ for root, dirs, files in os.walk(edi_path):
 
             # Get covariance matrix
             C, ss = tree.getC(data_1D, tr)
-            
-            # # Assess C
-            # if np.isnan(C).any():
-            #     bad_f = np.where(np.isnan(C))[0]
-            #     print('    .. bad data found for freq number %d (f = %5.5f Hz). Removed.'%(bad_f, data_1D['freq'][bad_f].values))
-            #     data_1D = data_1D.drop(bad_f)
-            #     data_1D = data_1D.reset_index(drop=True)
-            #     C, ss = tree.getC(data_1D, tr)
-            
 
             # load and plot MT data
             if plotMTdata: 
                 import matplotlib.pyplot as plt
                 plots.plot_edi(site_id,data_1D, ss, dataMT, medfiltsp, plot_rho=True)
-                # plt.savefig('edi/%s.png'%(site_id),dpi=600, bbox_inches="tight")
                 plt.savefig('%s/%s.png'%(edi_path,site_id),dpi=600, bbox_inches="tight")
                 plt.close('all')
                 print('    Data plot saved');
@@ -132,7 +106,6 @@ for root, dirs, files in os.walk(edi_path):
             if saveCSVfiles:
                 if EF < 0:
                     df,ss = tree.exportForTransD(site_id,data_1D, tr, errorfloor=-1)
-                    # df.to_csv('csv/%s.csv'%(site_id),sep=',', index=False)
                     df.to_csv(r'%s/%s.csv'%(csv_path,site_id),sep=',', index=False)
 
                 else:
