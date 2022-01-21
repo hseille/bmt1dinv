@@ -115,7 +115,7 @@ def models(siteid,hist_norm_model,grid_bounds,stats, chPts):
     
     
 
-def responses(siteid, histResp, grid_bounds_resps, datatype='rho'):
+def responses(siteid, histResp, grid_bounds_resps, datatype='rho',colorbar=True):
     
     """
     Plot PDF of responses

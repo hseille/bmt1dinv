@@ -119,7 +119,7 @@ def inputData(dat_file,appres=False):
     ZrERR = ((np.exp(df_obs['Zr'].values+log_std) - np.exp(df_obs['Zr'].values-log_std) )) / 2
     ZiERR = ((np.exp(df_obs['Zi'].values+log_std) - np.exp(df_obs['Zi'].values-log_std) )) / 2  
  
-    data[:,3] = C*0.5 * (ZrERR + ZiERR)
+    data[:,3] = C * 0.5 * (ZrERR + ZiERR)
 
     return data
 
@@ -275,7 +275,10 @@ def histModels(ensemble_models,  grid_bounds, nx=300, nz=300):
 
     
 @jit(nopython=False) 
-def histResponses(ensemble_models, grid_bounds_resps, nRho=100, nT=100, nModels=1000):    
+def histResponses(ensemble_models, grid_bounds_resps, 
+                  nRho=100, 
+                  nT=100, 
+                  nModels=1000):    
     
     """
     Compute the posterior PDFfor the responses. To have a complete PDF even 
@@ -284,14 +287,18 @@ def histResponses(ensemble_models, grid_bounds_resps, nRho=100, nT=100, nModels=
     
     Input:
         - ensemble of models
-        - grid boundaries ([Tmin,Tmax,Rhomin,Rhomax,Phymin,Phymax] / [Tmin,Tmax,Zrmin,Zrmax,Zimin,Zimax]])
-                            (Y: frequency / period --> nT
-                             X: resistivity in log10 (or impedance Z in log 10)) --> nRho
+        - grid boundaries:
+                - [Tmin,Tmax,Rhomin,Rhomax,Phymin,Phymax] or
+                     [Tmin,Tmax,Zrmin,Zrmax,Zimin,Zimax]
+                - Y: frequency / period --> nT
+                - X: resistivity in log10 (or impedance Z in log 10)) --> nRho
         - number of models to use for the plot
-        - number of frequencies to compute the forward (= as number of cells of the histograms, easier to code)
+        - number of frequencies to compute the forward 
+                (= as number of cells of the histograms, easier to code)
         
     Output:
-        - normalized histograms for rho/phy or Zr/Zi  (transposed for the plotting)
+        - normalized histograms for rho/phy or Zr/Zi  
+                        (transposed for plotting)
     """
     
     if len(ensemble_models) < nModels:
@@ -339,6 +346,6 @@ def histResponses(ensemble_models, grid_bounds_resps, nRho=100, nT=100, nModels=
         histZr[T,:] = histZr[T,:] / sum(histZr[T,:])     
         histZi[T,:] = histZi[T,:] / sum(histZi[T,:])     
         
-    return np.flipud(histRho.T),np.flipud(histPhy.T), np.flipud(histZr.T), np.flipud(histZi.T)
+    return np.flipud(histRho.T), np.flipud(histPhy.T), np.flipud(histZr.T), np.flipud(histZi.T)
 
 

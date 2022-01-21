@@ -1,0 +1,23 @@
+\begin{thebibliography}{}
+
+\bibitem[\protect\astroncite{Beamish and Travassos}{1992}]{Beamish1992}
+Beamish, D. and Travassos, J.~M. (1992).
+\newblock {The use of the D+ solution in magnetotelluric interpretation}.
+\newblock {\em Journal of Applied Geophysics}, 29(1):1--19.
+
+\bibitem[\protect\astroncite{Rung-Arunwan et~al.}{2016}]{Rung-Arunwan2016}
+Rung-Arunwan, T., Siripunvaraporn, W., and Utada, H. (2016).
+\newblock {On the Berdichevsky average}.
+
+\bibitem[\protect\astroncite{Seill{\'{e}} and Visser}{2020}]{Seille2020a}
+Seill{\'{e}}, H. and Visser, G. (2020).
+\newblock {Bayesian inversion of magnetotelluric data considering
+  dimensionality discrepancies}.
+\newblock {\em Geophysical Journal International}, 223(3):1565--1583.
+
+\bibitem[\protect\astroncite{Wight}{1987}]{Wight1987}
+Wight, D.~E. (1987).
+\newblock {MT/EMAP Data Interchange Standard}.
+\newblock Technical report, SEG.
+
+\end{thebibliography}

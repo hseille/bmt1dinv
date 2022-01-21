@@ -146,18 +146,30 @@ def phaseTensor(Z):
     
     """   
 
-    assert isinstance(Z, pd.DataFrame), 'Wrong input data format... aborted'
-    
-    freq = Z['FREQ'].values
-    nf = len(freq)
-    X11 = Z['ZXXR'].values
-    Y11 = Z['ZXXI'].values
-    X12 = Z['ZXYR'].values
-    Y12 = Z['ZXYI'].values
-    X21 = Z['ZYXR'].values
-    Y21 = Z['ZYXI'].values
-    X22 = Z['ZYYR'].values
-    Y22 = Z['ZYYI'].values
+    if isinstance(Z, pd.DataFrame):
+        freq = Z['FREQ'].values
+        nf = len(freq)
+        X11 = Z['ZXXR'].values
+        Y11 = Z['ZXXI'].values
+        X12 = Z['ZXYR'].values
+        Y12 = Z['ZXYI'].values
+        X21 = Z['ZYXR'].values
+        Y21 = Z['ZYXI'].values
+        X22 = Z['ZYYR'].values
+        Y22 = Z['ZYYI'].values
+        
+    else:
+        freq = Z[:,0]
+        nf = len(freq)
+        
+        X11 = Z[:,1]
+        Y11 = Z[:,2]
+        X12 = Z[:,4]
+        Y12 = Z[:,5]
+        X21 = Z[:,7]
+        Y21 = Z[:,8]
+        X22 = Z[:,10]
+        Y22 = Z[:,11]
 
 
     #loop over each frequency 
@@ -273,13 +285,13 @@ def medianFilter(freq, param, freq_sp):
     """   
     
     param_filt = np.zeros(len(freq))
-    # freq_sp = 0.2 # 1/2 interval value (log10) where the points can be considered for calculating the median
+    # freq_sp = 0.5 # interval value (log10) where the points can be considered for calculating the median
     for f1, f1_val in enumerate(freq):
         paramMed = []
         if f1 == 0:         # consider 0 beyond the beginning extremity (lim->0 = 0)
             paramMed = [0]
         for f2, f2_val in enumerate(freq):
-            if np.log10(f1_val)-freq_sp < np.log10(f2_val) < np.log10(f1_val)+freq_sp:
+            if np.log10(f1_val)- freq_sp/2 < np.log10(f2_val) < np.log10(f1_val)+ freq_sp/2:
                 paramMed.append(param[f2])
         param_filt[f1] = np.median(np.array(paramMed))
     return param_filt
@@ -372,7 +384,7 @@ def keepMax(x):
 
 
 
-def getData(edi_file_path, medfiltsp):
+def getData(edi_file_path, medfiltsp, StSh=False):
     
     # read edi file
     Z_orig, site_id, coord = readEDI(edi_file_path)
@@ -418,7 +430,10 @@ def getData(edi_file_path, medfiltsp):
     df_inv['ZdetLnSd'] = ZdetLnSd
     df_inv['elipM'] = ellipM
     df_inv['betaM'] = betaM
-    df_inv['difPolM'] = difPolM
+    if StSh:
+        df_inv['difPolM'] = difPolM 
+    else:
+        df_inv['difPolM'] = difPolM * 0.3
     
     dat = [Z_orig, ph_params, ph_paramsERR]
     

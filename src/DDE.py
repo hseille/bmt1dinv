@@ -16,9 +16,56 @@ __status__ = "Beta"
 
 
 
+
+
+# =============================================================================
+# Define here the files and parameters to use to create the input data
+# =============================================================================
+
+# specify project folder name
+project = 'example'
+
+# error floor to use, NOT in percent! 
+# -1 indicates that no error floors are used, just dimensionality errors
+EF = -1
+
+# it defines the lenght of the window, that will be used to perform the
+#    median filter, in log scale, along the frequency axis
+# medfiltsp = 0.5 => median filter along half a frequency decade
+medfiltsp = 0.5
+
+# options to plot the data and create the csv files needed for the inversion
+plotMTdata = True
+saveCSVfiles = True
+
+# option to consider possible static shift: if StSh is set to True, an error
+#   equivalent to the split between XY and YX will be assigned. THis option
+#   will cause small but potentially relevant signal to be ignored.
+#   default = False
+StSh = False
+
+# Define the path to the error model files used, it shouldn't be changed 
+#   unless a new tree is defined
+atts_file=r'..\projects\%s\tree\atts.txt'%(project)
+DDMfile = r'..\projects\%s\tree\tree.txt'%(project)
+
+edi_path = r'..\projects\%s\edi'%(project)
+csv_path = r'..\projects\%s\csv'%(project)
+# =============================================================================
+# 
+# =============================================================================
+
+
+
+
+
+
+
+
+
+
 # Load modules
 import os
-import sys
 import numpy as np
 import warnings
 warnings.filterwarnings('ignore')
@@ -38,32 +85,11 @@ print('#############################################\n')
 
 
 
-# =============================================================================
-# Define here the files and parameters to use to create the input data
-# =============================================================================
-project = 'example'
-atts_file=r'..\projects\%s\tree\atts.txt'%(project)
-DDMfile = r'..\projects\%s\tree\tree.txt'%(project)
-EF = -1
-medfiltsp = 0.2
-plotMTdata = True
-saveCSVfiles = True
-edi_path = r'..\projects\%s\edi'%(project)
-csv_path = r'..\projects\%s\csv'%(project)
-# =============================================================================
-# 
-# =============================================================================
-
-
-
-
-
 
 #read and store the tree attribute list 
 atts_dic = tree.readAttsFile(atts_file)
 
 #read and store the decision tree 
-# tree_file = "/tree/%s"%(DDMfile)
 tr = tree.readTreeFile(DDMfile, atts_dic)
 
 print('EDI files folder: ',edi_path)
@@ -97,20 +123,30 @@ for root, dirs, files in os.walk(edi_path):
             # load and plot MT data
             if plotMTdata: 
                 import matplotlib.pyplot as plt
-                plots.plot_edi(site_id,data_1D, ss, dataMT, medfiltsp, plot_rho=True)
-                plt.savefig('%s/%s.png'%(edi_path,site_id),dpi=600, bbox_inches="tight")
+                plots.plot_edi(site_id,data_1D, ss, dataMT, medfiltsp, 
+                               plot_rhoPhy=True, 
+                               plot_antidiag=True, 
+                               plot_diag=True,
+                               phase_90=True, 
+                               plot_size = 'small')
+                plt.savefig('%s/%s.png'%(edi_path,site_id),dpi=600, 
+                            bbox_inches="tight")
                 plt.close('all')
                 print('    Data plot saved');
                 
             #  save CSV files for the inversion
             if saveCSVfiles:
                 if EF < 0:
-                    df,ss = tree.exportForTransD(site_id,data_1D, tr, errorfloor=-1)
-                    df.to_csv(r'%s/%s.csv'%(csv_path,site_id),sep=',', index=False)
+                    df,ss = tree.exportForTransD(site_id,data_1D, 
+                                                 tr, errorfloor=-1)
+                    df.to_csv(r'%s/%s.csv'%(csv_path,site_id),
+                              sep=',', index=False)
 
                 else:
-                    df,ss = tree.exportForTransD(site_id,data_1D, tr, errorfloor=EF)
-                    df.to_csv('%s/%sEF%d.csv'%(csv_path,site_id,100*EF),sep=',', index=False)
+                    df,ss = tree.exportForTransD(site_id,data_1D, 
+                                                 tr, errorfloor=EF)
+                    df.to_csv('%s/%sEF%d.csv'%(csv_path,site_id,100*EF),
+                                                  sep=',', index=False)
 
                 print('    Input .csv file saved');
 

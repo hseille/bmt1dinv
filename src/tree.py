@@ -147,7 +147,6 @@ def getC(data, tr, nsCov=None, noiseCovar=False):
     else:
         for i in range(nF):
             C[i,i] += ns[i]**2
-        
     return C, ss
 
 

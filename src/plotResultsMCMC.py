@@ -16,17 +16,11 @@ __status__ = "Beta"
 
 
 
-import sys
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-import copy
-
-import ensembles as ensembles
-import MT as MT
-import plotPDFs as plotPDFs
 
 
+# =============================================================================
+# Define here the parameters and folders to create the results plots
+# =============================================================================
 
 project = 'example'
 DepthMin = 0
@@ -36,6 +30,29 @@ PlotResponses = True
 plot_niblettBostick =False
 DepthLogScale = False  # plt the depth in log scale
 files_path = r'..\projects\%s\transdMT\outfolder'%project
+
+# =============================================================================
+# 
+# =============================================================================
+
+
+
+
+
+
+
+
+
+
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import copy
+
+import ensembles as ensembles
+import MT as MT
+import plotPDFs as plotPDFs
 
 
 print('Plot models: ',PlotModels)
