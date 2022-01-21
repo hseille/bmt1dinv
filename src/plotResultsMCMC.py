@@ -29,7 +29,7 @@ PlotModels = True
 PlotResponses = True
 plot_niblettBostick =False
 DepthLogScale = False  # plt the depth in log scale
-files_path = r'..\projects\%s\transdMT\outfolder'%project
+files_path = '../projects/%s/transdMT/outfolder'%project
 
 # =============================================================================
 # 

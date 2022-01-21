@@ -46,11 +46,11 @@ StSh = False
 
 # Define the path to the error model files used, it shouldn't be changed 
 #   unless a new tree is defined
-atts_file=r'..\projects\%s\tree\atts.txt'%(project)
-DDMfile = r'..\projects\%s\tree\tree.txt'%(project)
+atts_file = '../projects/%s/tree/atts.txt'%(project)
+DDMfile  =  '../projects/%s\tree/tree.txt'%(project)
 
-edi_path = r'..\projects\%s\edi'%(project)
-csv_path = r'..\projects\%s\csv'%(project)
+edi_path  = '../projects/%s/edi'%(project)
+csv_path  = '../projects/%s/csv'%(project)
 # =============================================================================
 # 
 # =============================================================================
