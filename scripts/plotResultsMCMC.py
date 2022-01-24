@@ -44,15 +44,16 @@ files_path = '../projects/%s/transdMT/outfolder'%project
 
 
 
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 import copy
+import sys
 
-import ensembles as ensembles
-import MT as MT
-import plotPDFs as plotPDFs
+sys.path.append("../src")
+import ensembles
+import MT 
+import plotPDFs
 
 
 print('Plot models: ',PlotModels)

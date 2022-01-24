@@ -69,10 +69,12 @@ import os
 import numpy as np
 import warnings
 warnings.filterwarnings('ignore')
+import sys
 
-import tree as tree
-import MT as MT
-import plots as plots
+sys.path.append("../src")
+import tree
+import MT
+import plotData
 
 
 print('\n#############################################')
@@ -123,7 +125,7 @@ for root, dirs, files in os.walk(edi_path):
             # load and plot MT data
             if plotMTdata: 
                 import matplotlib.pyplot as plt
-                plots.plot_edi(site_id,data_1D, ss, dataMT, medfiltsp, 
+                plotData.plot_edi(site_id,data_1D, ss, dataMT, medfiltsp, 
                                plot_rhoPhy=True, 
                                plot_antidiag=True, 
                                plot_diag=True,
