@@ -123,14 +123,13 @@ def inputData(dat_file,appres=False):
 
     return data
 
-    
-    
-    
+
+
 
 def sampResps(samp_resp_file, freq):
     
+    C = 10000/(4*np.pi)
     nFreq = len(freq)
-    
     f = open(samp_resp_file, "rb")
     stop = False
     ensemble_resps = []
@@ -143,21 +142,19 @@ def sampResps(samp_resp_file, freq):
                 if not byte:
                     stop = True
                     break
-                zr = struct.unpack('=d', byte)[0]
+                zr = struct.unpack('=d', byte)[0] * C
                 Z_re.append(zr)
                 
                 byte = f.read(8)
-                zi = struct.unpack('=d', byte)[0]
+                zi = struct.unpack('=d', byte)[0] * C
                 Z_im.append(zi)
             if stop:
                 break
             else:
-                continue
-            resps = np.zeros((nFreq,2))
-            resps[:,0] = Z_re
-            resps[:,1] = Z_im
-            ensemble_resps.append(resps)
-            
+                resps = np.zeros((nFreq,2))
+                resps[:,0] = Z_re
+                resps[:,1] = Z_im
+                ensemble_resps.append(resps)
     finally:
         f.close()
     
@@ -176,7 +173,6 @@ Output:
 - layers depth for this model
 
 """
-
 
 @jit(nopython=False) 
 def changePt(m):
@@ -218,8 +214,6 @@ Output:
 - chPts (model only)
 
 """
-
-
 
 @jit(nopython=False) 
 def histModels(ensemble_models,  grid_bounds, nx=300, nz=300):
@@ -278,7 +272,8 @@ def histModels(ensemble_models,  grid_bounds, nx=300, nz=300):
 def histResponses(ensemble_models, grid_bounds_resps, 
                   nRho=100, 
                   nT=100, 
-                  nModels=1000):    
+                  nModels=1000,
+                  datatype='Z'):    
     
     """
     Compute the posterior PDFfor the responses. To have a complete PDF even 
@@ -324,28 +319,63 @@ def histResponses(ensemble_models, grid_bounds_resps,
     histZi = np.zeros((nT, nRho))
 
     TT = np.linspace(Tmin+(Tmax-Tmin)/(nT*2.), Tmax+(Tmax-Tmin)/(nT*2.), nT+1)[:-1]
+    C = 10000/(4*np.pi)
     
     for i in randMod:
         model = ensemble_models[i][1::2] 
         f, rho, phy, Z = MT.fwd1D(model,(1/10**TT))
+        Zr = Z.real *C
+        Zi = Z.imag *C
         
         for t in range(nT):
-            v_rho = int(math.ceil((((np.log10(rho[t])-Rhomin)/Rho_range)*nRho)))
-            histRho[t,v_rho-1] += 1
-            v_phy = int(math.ceil((((phy[t]-Phymin)/Phy_range)*nRho)))
-            histPhy[t,v_phy-1] += 1      
-         
-            v_Zr = int(math.ceil((((np.log10(Z[t]).real-Zmin)/Z_range)*nRho)))
-            histZr[t,v_Zr-1] += 1    
-            v_Zi = int(math.ceil((((np.log10(Z[t]).imag-Zmin)/Z_range)*nRho)))
-            histZi[t,v_Zi-1] += 1    
+            if datatype == 'rhoPhy':
+                v_rho = int(math.ceil((((np.log10(rho[t])-Rhomin)/Rho_range)*nRho)))
+                histRho[t,v_rho-1] += 1
+                v_phy = int(math.ceil((((phy[t]-Phymin)/Phy_range)*nRho)))
+                histPhy[t,v_phy-1] += 1      
+            elif datatype == 'Z':
+                v_Zr = int(math.ceil((((np.log10(Zr[t])-Zmin)/Z_range)*nRho)))
+                histZr[t,v_Zr-1] += 1    
+                v_Zi = int(math.ceil((((np.log10(Zi[t])-Zmin)/Z_range)*nRho)))
+                histZi[t,v_Zi-1] += 1    
     
     for T in range(0,nT):
-        histRho[T,:] = histRho[T,:] / sum(histRho[T,:])    
-        histPhy[T,:] = histPhy[T,:] / sum(histPhy[T,:])    
-        histZr[T,:] = histZr[T,:] / sum(histZr[T,:])     
-        histZi[T,:] = histZi[T,:] / sum(histZi[T,:])     
+        if datatype == 'rhoPhy':
+            histRho[T,:] = histRho[T,:] / sum(histRho[T,:])    
+            histPhy[T,:] = histPhy[T,:] / sum(histPhy[T,:])    
+        elif datatype == 'Z':
+            histZr[T,:] = histZr[T,:] / sum(histZr[T,:])     
+            histZi[T,:] = histZi[T,:] / sum(histZi[T,:])     
+    
+    if datatype == 'rhoPhy':
+        return np.flipud(histRho.T), np.flipud(histPhy.T)
+    elif datatype == 'Z':
+        return  np.flipud(histZr.T), np.flipud(histZi.T)
+
+
+
+
+def read_invParams(params_file):
+    with open(params_file) as f:
+        lines = f.readlines()
+
+    nChains = int(lines[1].split('=')[1][:-1])
+    nIt = int(lines[2].split('=')[1][:-1])
+    samples_perChain = int(lines[5].split('=')[1][:-1])
+    rhoMin = int(lines[7].split('=')[1][:-1])
+    rhoMax = int(lines[8].split('=')[1][:-1])
+    
+    return nChains, nIt, samples_perChain, rhoMin, rhoMax
+
+# class inv(object):
+#     def __init__(self,params_file):
+#         with open(params_file) as f:
+#             lines = f.readlines()
+#         self.nChains = int(lines[1].split('=')[1][:-1])
+#         self.nIt = int(lines[2].split('=')[1][:-1])
+#         self.samples_perChain = int(lines[5].split('=')[1][:-1])
+#         self.rhoMin = int(lines[7].split('=')[1][:-1])
+#         self.rhoMax = int(lines[8].split('=')[1][:-1])
         
-    return np.flipud(histRho.T), np.flipud(histPhy.T), np.flipud(histZr.T), np.flipud(histZi.T)
 
-
+    

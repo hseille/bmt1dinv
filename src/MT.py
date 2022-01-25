@@ -145,6 +145,8 @@ def phaseTensor(Z):
     - phase tensor parameters (phmax,phmin,alpha,beta,ellip,azimuth)
     
     """   
+    def names(name):
+        return  Z[name].values
 
     if isinstance(Z, pd.DataFrame):
         freq = Z['FREQ'].values
@@ -299,7 +301,7 @@ def medianFilter(freq, param, freq_sp):
 
 
 
-def z2rhophy(freq,Zr,Zi,dZ):
+def z2rhophy(freq,Zr,Zi,dZ=0):
     
     import numpy as np
 
@@ -475,7 +477,6 @@ def fwd1D(model, f, layers = 'depth'):
     
     res = model[:,0] 
     
-	
     if layers == 'depth':
         depth = model[:,1]  #depth
         # Calculate thickness of each layers
@@ -487,10 +488,9 @@ def fwd1D(model, f, layers = 'depth'):
         #th[-2] =  th[-1] / 2
     else:
         th = model[:,0]  #thicknesses
-	
+
     nlayers = len(res)
     
-    con=1/res
     nf=len(f)
     
     ares=[]
@@ -500,7 +500,6 @@ def fwd1D(model, f, layers = 'depth'):
     
     #Define arrays
     w = 2*np.pi*f
-    T = 1 / f
     
     Cm = np.empty(nlayers, complex)
     Z = np.empty(nf, complex)
@@ -564,4 +563,14 @@ def niblettBostick_depthTransform(rho, phy, T):
     
     return rho_nb, depth_nb
 
+
+
+
+def rms(obs_dat, resp):
     
+    nfreq = obs_dat.shape[0]
+    msftRe = (obs_dat[:,1] - resp[:,0])**2 / obs_dat[:,3]**2
+    msftIm = (obs_dat[:,2] - resp[:,1])**2 / obs_dat[:,3]**2
+    msft = (np.sum(msftRe) + np.sum(msftIm))/(nfreq)
+    
+    return msft**0.5

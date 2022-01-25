@@ -20,6 +20,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
+import MT
+
 
 
 
@@ -134,17 +136,14 @@ def responses(siteid, histResp, grid_bounds_resps, datatype='rho',colorbar=True)
     - save plot ? no
     
     """
-    #histResp = histPhy
-    #datatype='phy'
-    #fig = plt.figure(10)
-    
+
     color = 'jet'
     jetBig = matplotlib.cm.get_cmap(color, 256)
     new_color = jetBig(np.linspace(0.05, 0.85, 256))
     endTransparency=np.linspace(0,1,100)
     new_color[:100,3] = endTransparency
     color = matplotlib.colors.ListedColormap(new_color)
-  
+
     # Clip histogram for better visualisation
     h1 = np.clip(histResp, 0.001, 0.2)
     
@@ -160,27 +159,77 @@ def responses(siteid, histResp, grid_bounds_resps, datatype='rho',colorbar=True)
 
     im = plt.imshow(np.log10(h1), interpolation = 'bicubic', 
                     cmap=color, 
-                    extent=[grid_bounds[0],grid_bounds[1],
-                            grid_bounds[2],grid_bounds[3]], 
+                    extent=grid_bounds, 
                     aspect='auto')
-    
+
     if datatype == 'rho':  
         plt.ylabel('Log$_{10}$ App. Res.($\Omega$.m)');plt.title('%s'%siteid)
     if datatype == 'phy':  
         plt.ylabel('Phase (degrees)'), plt.yticks([0,45,90])
     if datatype == 'Z':    
         plt.ylabel('Log$_{10}$ Z ($\Omega$)');plt.title('MT%s'%siteid)
-    #plt.xlabel('Log$_{10}$ Period (sec)')
     plt.xticks(np.arange(-5,5))
-    
     plt.grid(linestyle=':')
-    #plt.xlim=(grid_bounds_resps[0],grid_bounds_resps[1])
-   
+    # plt.colorbar(im,ticks=[0,-1,-2,-3,-4],label = 'Log$_{10}$ PDF')
 
-    #plt.legend(loc=3,framealpha = 1)
-    plt.colorbar(im,ticks=[0,-1,-2,-3,-4],label = 'Log$_{10}$ PDF')
-    #fig.colorbar(im,ticks=[0,-1,-2,-3,-4])
+
+def responses_fast(siteid, freqs, ensemble, datatype='rho'):
     
-    #plt.tight_layout()    
+    """
+    Plot PDF of responses
+
+    Input:
+    All the inputs are outputs of the functions posteriorHistograms.py
+    - site Id
+    - histogram
+
     
+    Output:
+    - plot
     
+    Options:
+    - save plot ? no
+    
+    """
+
+    selected_responses = np.linspace(0,len(ensemble)-1,100,dtype=int)
+    logT= np.log10(1/freqs)
+    
+    if datatype == 'rho':  
+        for i in selected_responses:
+            rho, phy, drho, dphy = MT.z2rhophy(freqs,
+                                           ensemble[i][:,0],
+                                           ensemble[i][:,1])
+            plt.plot(logT,np.log10(rho), c='grey',ls='-',lw=0.1)
+            plt.ylabel('Log$_{10}$ App. Res.($\Omega$.m)')
+            plt.title('%s'%siteid)
+
+    if datatype == 'phy':  
+        for i in selected_responses:
+            rho, phy, drho, dphy = MT.z2rhophy(freqs,
+                                           ensemble[i][:,0],
+                                           ensemble[i][:,1])
+            plt.plot(logT,phy, c='grey',ls='-',lw=0.1)
+            plt.ylabel('Phase (degrees)')
+            plt.yticks([0,45,90])
+            
+    if datatype == 'Zr':  
+        for i in selected_responses:
+            Zr = ensemble[i][:,0]
+            plt.plot(logT,np.log10(Zr), 'r-',lw=0.1)
+        plt.plot(logT,np.log10(Zr), 'r-',lw=1, zorder=0,label='Zr')
+        plt.ylabel('Log$_{10}$ Z ($\Omega$)')
+        plt.title('%s'%siteid)
+        plt.legend()
+
+    if datatype == 'Zi':  
+        for i in selected_responses:
+            Zi = ensemble[i][:,1]
+            plt.plot(logT,np.log10(Zi), 'b-',lw=0.1)
+        plt.plot(logT,np.log10(Zi), 'b-',lw=1, zorder=0,label='Zi')
+        plt.ylabel('Log$_{10}$ Z ($\Omega$)')
+        plt.yticks(np.linspace(-8,2,11))
+        plt.legend()
+
+    plt.xticks(np.arange(-5,5))
+    plt.grid(linestyle=':')
