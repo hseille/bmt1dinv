@@ -1,2 +1,5 @@
 *.pyc
 *.png
+*.csv
+*sampModels
+*sampResps
