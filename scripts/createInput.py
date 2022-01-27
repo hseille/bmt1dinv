@@ -23,7 +23,7 @@ __status__ = "Beta"
 # =============================================================================
 
 # specify project folder name
-project = 'example'
+project = 'mansfield'
 
 # error floor to use, NOT in percent! 
 # -1 indicates that no error floors are used, just dimensionality errors
@@ -94,13 +94,14 @@ atts_dic = tree.readAttsFile(atts_file)
 #read and store the decision tree 
 tr = tree.readTreeFile(DDMfile, atts_dic)
 
+print('Project: ',project)
 print('EDI files folder: ',edi_path)
 # loop over the data files (EDI files)
 for root, dirs, files in os.walk(edi_path):
     for file in files:
         if file.endswith('.edi'):
             edi_file = file
-            print('\nMT station %s... '%edi_file)
+            print('\nMT site %s... '%edi_file)
             edi_file_path = r'%s/%s'%(root, edi_file)
             print('    Loading EDI file... ')
 

@@ -66,18 +66,17 @@ import plotPDFs
 
 files_path = '../projects/%s/transdMT/outfolder'%project
 
-print('Plot models: ',PlotModels)
-print('Plot responses: ',PlotResponses)
-print('Plot inversion statistics: ', Plot_inversionStatistics)
-print('Plot Niblett-Bostick depth-transform: ',plot_niblettBostick)
+print('Project: ',project)
+print(' Plot models: ',PlotModels)
+print(' Plot responses: ',PlotResponses)
+print(' Plot inversion statistics: ', Plot_inversionStatistics)
+print(' Plot Niblett-Bostick depth-transform: ',plot_niblettBostick)
 
 
 site_ids = []
 for file in os.listdir(files_path):
     if file.endswith(".csv") and not file.endswith("log.csv"):
         site_ids.append(file[:-4])
-
-#print(site_ids)
 
 for site_id in site_ids:             
     
@@ -355,7 +354,7 @@ for site_id in site_ids:
         ax3.legend(loc=1)
         
         weights = np.ones_like(lkh) / len(lkh)
-        ax4.hist(lkh,len(np.arange(np.array(lkh).min()-1, np.array(lkh).max()+1, 1))-2,
+        ax4.hist(lkh,20,
                  color='k', 
                  histtype='bar', 
                  ec='white',

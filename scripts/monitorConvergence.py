@@ -48,10 +48,10 @@ for file in os.listdir(files_path):
 params_file = './inversionParameters.txt'
 nChains, nIt, samples_perChain, rhoMin, rhoMax = ensembles.read_invParams(params_file)
 
-
+print('Project: ',project)
 for site_id in site_ids:             
     
-    print('Plotting convergeance statistics for MT site %s...'%site_id)
+    print(' Plotting convergeance statistics for MT site %s...'%site_id)
     
     thinning = 1000
     
