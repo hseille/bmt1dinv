@@ -27,8 +27,8 @@ project = 'example'
 
 # error floor to use, NOT in percent! 
 # -1 indicates that no error floors are used, just dimensionality errors
-# EF = -1
-EF = 0.05
+EF = -1
+# EF = 0.05
 
 # it defines the lenght of the window, that will be used to perform the
 #    median filter, in log scale, along the frequency axis
