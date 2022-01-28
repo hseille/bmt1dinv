@@ -30,6 +30,7 @@ project = 'example'
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from os.path import exists
 import sys
 import numpy as np
 
@@ -56,6 +57,8 @@ for site_id in site_ids:
     thinning = 1000
     
     log_file = '%s/%s_log.csv'%(files_path,site_id)
+    
+    assert exists(log_file), '   convergence statistics for MT site %s not existing!!'%site_id
     df_obs = pd.read_csv(log_file, skiprows=0)
     for i in range(1,nChains):
         df_obs = df_obs.drop(i*nIt)
@@ -91,92 +94,9 @@ for site_id in site_ids:
     plt.tight_layout
 
 
-    plt.savefig('%s/%s_convergeance.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+    plt.savefig('%s/%s_convergence.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
     plt.close('all')
 
 
 
 
-
-
-
-
-
-
-
-# fig = plt.figure(10,figsize=(10,7),constrained_layout=True)
-# from matplotlib.gridspec import GridSpec
-# gs = GridSpec(3, 6, figure=fig)
-# ax1 = fig.add_subplot(gs[0, :4])
-# ax2 = fig.add_subplot(gs[0, 4:])
-# ax3 = fig.add_subplot(gs[1, :4])
-# ax4 = fig.add_subplot(gs[1, 4:])
-# ax5 = fig.add_subplot(gs[2, :4])
-# ax6 = fig.add_subplot(gs[2, 4:])
-
-
-# rms=[]
-# for mod in range(len(ensemble_resps)):
-#     Zr = ensemble_resps[mod][:,0]
-#     Zi = ensemble_resps[mod][:,1]
-#     resp = np.array([Zr.T,Zi.T]).T
-#     rms.append(MT.rms(obs_dat,resp))
-
-
-# for i in range(1,n_maxChains):
-#     for j in range(1,nChains):
-#         ax1.plot(it_num, rms[i*samples_perChain:(i+1)*samples_perChain], '-', lw=0.1)
-# ax1.set_xlim([0.75 * nIt, nIt])
-# # plt.ylim([df_obs[' nll'][750000:].mean()-5*df_obs[' nll'][750000:].std(),df_obs[' nll'][750000:].mean()+10*df_obs[' nll'][750000:].std()])
-# ax1.set_ylabel('RMS\n ')
-# ax1.set_title('%s'%site_id)
-
-
-# weights = np.ones_like(rms) / len(rms)
-# ax2.hist(rms,20,
-#          color='k', 
-#          histtype='bar', 
-#          ec='white',
-#          align='left', 
-#          weights=weights)
-# ax2.set_xlabel('RMS')
-# ax2.set_ylabel('probability')
-
-# for i in range(1,n_maxChains):
-#     for j in range(1,nChains):
-#         ax3.plot(it_num, lkh[i*samples_perChain:(i+1)*samples_perChain], '-', lw=0.1)
-# ax3.set_xlim([0.75 * nIt, nIt])
-# # plt.ylim([df_obs[' nll'][750000:].mean()-5*df_obs[' nll'][750000:].std(),df_obs[' nll'][750000:].mean()+10*df_obs[' nll'][750000:].std()])
-# ax3.set_ylabel('Normalized\nLog Likelihood')
-
-# weights = np.ones_like(lkh) / len(lkh)
-# ax4.hist(lkh,len(np.arange(np.array(lkh).min()-1, np.array(lkh).max()+1, 1))-2,
-#          color='k', 
-#          histtype='bar', 
-#          ec='white',
-#          align='left', 
-#          weights=weights)
-# ax4.set_xlabel('Normalized Log Likelihood')
-# ax4.set_ylabel('probability')
-
-# for i in range(1,n_maxChains):
-#     for j in range(1,nChains):
-#         ax5.plot(it_num, nLayers[i*samples_perChain:(i+1)*samples_perChain], '-', lw=0.1)
-# ax5.set_xlim([0.75 * nIt, nIt])
-# # plt.ylim([0,df_obs['layers'][750000:].mean()+5*df_obs['layers'][750000:].std()])
-# ax5.set_ylabel('Number of\ninterfaces')
-# ax5.set_xlabel('Iterations')
-
-# weights = np.ones_like(nLayers) / len(nLayers)
-# ax6.hist(nLayers,len(np.arange(np.array(nLayers).min()-1, np.array(nLayers).max()+1, 1))-2,
-#          color='k', 
-#          histtype='bar', 
-#          ec='white',
-#          align='left', 
-#          weights=weights)
-# ax6.set_xlabel('# interfaces')
-# ax6.set_ylabel('probability')
-
-
-# plt.savefig('%s/%s_stats.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
-# plt.close('all')

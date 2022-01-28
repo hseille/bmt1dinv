@@ -23,11 +23,12 @@ __status__ = "Beta"
 # =============================================================================
 
 # specify project folder name
-project = 'mansfield'
+project = 'example'
 
 # error floor to use, NOT in percent! 
 # -1 indicates that no error floors are used, just dimensionality errors
-EF = -1
+# EF = -1
+EF = 0.05
 
 # it defines the lenght of the window, that will be used to perform the
 #    median filter, in log scale, along the frequency axis
@@ -44,6 +45,11 @@ saveCSVfiles = True
 #   default = False
 StSh = False
 
+# =============================================================================
+# 
+# =============================================================================
+
+
 # Define the path to the error model files used, it shouldn't be changed 
 #   unless a new tree is defined
 atts_file = '../projects/%s/tree/atts.txt'%(project)
@@ -51,9 +57,7 @@ DDMfile  =  '../projects/%s/tree/tree.txt'%(project)
 
 edi_path  = '../projects/%s/edi'%(project)
 csv_path  = '../projects/%s/csv'%(project)
-# =============================================================================
-# 
-# =============================================================================
+
 
 
 

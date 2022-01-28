@@ -32,7 +32,7 @@ if PlotModels:
 
 PlotResponses = True
 if PlotResponses:
-    plotResp_Z = True
+    plotResp_Z = False
     fast_responses_plot = True
 
 Plot_inversionStatistics = True
@@ -269,7 +269,7 @@ for site_id in site_ids:
 
     if Plot_inversionStatistics:
 
-        print('    plotting MCMC statistics...')
+        
         
         params_file = './inversionParameters.txt'
         nChains, nIt, samples_perChain, rhoMin, rhoMax = ensembles.read_invParams(params_file)
@@ -278,7 +278,6 @@ for site_id in site_ids:
             nLayers
         except NameError:
             samp_models_file =r'%s/%s_sampModels'%(files_path,site_id)
-            print('\nMT site %s...'%site_id)
             print('    loading models ensemble...')
             # load ensemble of models
             ensemble_models, nLayers, lkh, maxLkh_mod, prior  = ensembles.sampModels(samp_models_file)
@@ -297,6 +296,7 @@ for site_id in site_ids:
             samp_resps_file = r'%s/%s_sampResps'%(files_path,site_id)
             ensemble_resps = ensembles.sampResps(samp_resps_file, ff)
 
+        print('    plotting MCMC statistics...')
         
         #n_maxChains = 20
         it_num = np.linspace(0.75 * nIt, nIt, samples_perChain,dtype=int)
@@ -338,7 +338,7 @@ for site_id in site_ids:
                  align='left', 
                  weights=weights)
         ax2.axvline(np.median(rms), c = 'r', ls = '--',label = 'median')
-        ax2.set_xlabel('RMS')
+        ax2.set_title('RMS')
         ax2.set_ylabel('probability')
         # ax2.legend(loc=1)
 
@@ -361,7 +361,7 @@ for site_id in site_ids:
                  align='left', 
                  weights=weights)
         ax4.axvline(np.median(lkh), c = 'r', ls = '--',label = 'median')
-        ax4.set_xlabel('Normalized Log Likelihood')
+        ax4.set_title('Normalized Log Likelihood')
         ax4.set_ylabel('probability')
         # ax4.legend(loc=1)
         
@@ -386,11 +386,11 @@ for site_id in site_ids:
                  align='left', 
                  weights=weights)
         ax6.axvline(np.median(nLayers), c = 'r', ls = '--',label = 'median')
-        ax6.set_xlabel('# layers')
+        ax6.set_title('# layers')
         ax6.set_ylabel('probability')
         # ax6.legend(loc=1)
 
-        plt.tight_layout
+        plt.tight_layout()
 
 
         plt.savefig('%s/%s_stats.png'%(files_path,site_id),dpi=300, bbox_inches="tight")

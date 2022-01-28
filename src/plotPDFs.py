@@ -176,19 +176,7 @@ def responses(siteid, histResp, grid_bounds_resps, datatype='rho',colorbar=True)
 def responses_fast(siteid, freqs, ensemble, datatype='rho'):
     
     """
-    Plot PDF of responses
-
-    Input:
-    All the inputs are outputs of the functions posteriorHistograms.py
-    - site Id
-    - histogram
-
-    
-    Output:
-    - plot
-    
-    Options:
-    - save plot ? no
+    Plot responses
     
     """
 

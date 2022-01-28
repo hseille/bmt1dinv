@@ -1,6 +1,6 @@
 number_of_chains_running_in_parallel=5
-total_number_of_chains=5
-iterations_per_chain=50000
+total_number_of_chains=20
+iterations_per_chain=500000
 ipfile=ipfile.csv
 gamma=2
 samples_per_chain=100
