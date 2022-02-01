@@ -6,13 +6,9 @@ params='inversionParameters.txt'
 
 
 echo "\n 
-############################################
-##   Trans-dimensional MCMC 1D Inversion  ##
-##        of Magnetotelluric Data         ##
-##                                        ##
-##       Hoël Seillé / Gerhard Visser     ##
-##            CSIRO DEI FSP 2020          ##
-############################################"
+
+ # Trans-dimensional MCMC 1D Inversion of Magnetotelluric Data #
+
 
 #read transdMT inversion parameters file
 echo ' '
