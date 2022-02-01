@@ -10,7 +10,7 @@ echo "\n
 ##   Trans-dimensional MCMC 1D Inversion  ##
 ##        of Magnetotelluric Data         ##
 ##                                        ##
-##       Gerhard Visser / Hoël Seillé     ##
+##       Hoël Seillé / Gerhard Visser     ##
 ##            CSIRO DEI FSP 2020          ##
 ############################################"
 
