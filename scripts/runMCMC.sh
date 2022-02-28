@@ -5,7 +5,7 @@ params='inversionParameters.txt'
 
 
 
-echo "\n 
+echo "\n" 
 
  # Trans-dimensional MCMC 1D Inversion of Magnetotelluric Data #
 
