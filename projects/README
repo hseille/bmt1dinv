@@ -1,0 +1,10 @@
+# project folder
+
+ - The "empty_project" directory can be copy-pasted and used as a blank directory for a new project.
+
+ - The "example" directory contains some of the data presented in Seillé and Visser (2020): 
+		Seillé, H., & Visser, G. (2020). Bayesian inversion of magnetotelluric data considering dimensionality discrepancies. Geophysical Journal International, 223(3), 1565–1583. https://doi.org/10.1093/gji/ggaa391
+ 
+ - The "mansfield" directory contains the synthetic MT data presented in Giraud et al. (2022):
+		Giraud, J., Seillé, H., Lindsay, M. D., Visser, G., Ogarko, V., & Jessell, M. W. (2021). Utilisation of probabilistic MT inversions to constrain magnetic data inversion: proof-of-concept and field application. Solid Earth Discussions, 2021, 1–33. https://doi.org/10.5194/se-2021-124
+		
