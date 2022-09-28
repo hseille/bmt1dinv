@@ -259,10 +259,7 @@ for site_id in site_ids:
             
         
         plt.tight_layout() 
-        if plotResp_Z:
-            plt.savefig('%s/%s_fitZ.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
-        else:
-            plt.savefig('%s/%s_fit.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+        plt.savefig('%s/%s_fit.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
         plt.close('all')
 
 
@@ -364,7 +361,7 @@ for site_id in site_ids:
                  align='left', 
                  weights=weights)
         ax4.axvline(np.median(lkh), c = 'r', ls = '--',label = 'median')
-        ax4.set_title('Negative Log Likelihood')
+        ax4.set_title('Normalized Log Likelihood')
         ax4.set_ylabel('probability')
         # ax4.legend(loc=1)
         

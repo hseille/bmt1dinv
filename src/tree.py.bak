@@ -2,7 +2,7 @@
     File name: tree.py
     Authors: Hoël Seillé / Gerhard Visser
     Date created: 01/06/2020
-    Date last modified: 28/09/2022
+    Date last modified: 26/10/2020
     Python Version: 3.6
 '''
 __author__ = "Hoël Seillé / Gerhard Visser"
@@ -151,7 +151,7 @@ def getC(data, tr, nsCov=None, noiseCovar=False):
 
 
 
-def exportForTransD(siteId,data, tr, errorfloor=-1, fcorr = False):
+def exportForTransD(siteId,data, tr, errorfloor=-1):
     nF = len(data)
     if errorfloor > 0:
         C = np.zeros((nF,nF))
@@ -166,15 +166,8 @@ def exportForTransD(siteId,data, tr, errorfloor=-1, fcorr = False):
     else:
         C, ss = getC(data, tr)
 
-    if fcorr:
-        # Calculate inverse of C
-        # D = linalg.inv(C)
-        D = np.linalg.lstsq(C, np.identity(C.shape[0]))
-        print(D.shape)
-        
-        
-    else:
-        D = np.diag(ss**-2)
+    # Calculate inverse of C
+    D = linalg.inv(C)
     #write to csv file    
     ss=pd.Series(ss)
     df = pd.concat([data['freq'], data['ZdetRLn'], data['ZdetILn'], ss], axis=1)
