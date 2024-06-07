@@ -109,7 +109,7 @@ def inputData(dat_file,appres=False):
     data[:,0] = df_obs['freq'].values
     if appres:
         data[:,1] = np.exp(df_obs['Zr'].values)
-        data[:,2] = np.exp(df_obs['Zr'].values)
+        data[:,2] = np.exp(df_obs['Zi'].values)
     else:
         data[:,1] = C*np.exp(df_obs['Zr'].values)
         data[:,2] = C*np.exp(df_obs['Zi'].values)

@@ -26,9 +26,12 @@ __status__ = "Beta"
 project = 'example'
 
 # error floor to use, NOT in percent! 
-# -1 indicates that no error floors are used, just dimensionality errors
+# -1 indicates that dimensionality errors are used
+# otherwise it uses the value specified
 EF = -1
 # EF = 0.05
+# Decide on a minimum error floor to apply to the data when dimensionality errors are used
+min_errorfloor = 0.01
 
 # it defines the lenght of the window, that will be used to perform the
 #    median filter, in log scale, along the frequency axis
@@ -41,7 +44,7 @@ saveCSVfiles = True
 
 # option to consider possible static shift: if StSh is set to True, an error
 #   equivalent to the split between XY and YX will be assigned. THis option
-#   will cause small but potentially relevant signal to be ignored.
+#   could cause small but potentially relevant signal to be ignored.
 #   default = False
 StSh = False
 
@@ -57,13 +60,6 @@ DDMfile  =  '../projects/%s/tree/tree.txt'%(project)
 
 edi_path  = '../projects/%s/edi'%(project)
 csv_path  = '../projects/%s/csv'%(project)
-
-
-
-
-
-
-
 
 
 
@@ -133,7 +129,7 @@ for root, dirs, files in os.walk(edi_path):
                 plotData.plot_edi(site_id,data_1D, ss, dataMT, medfiltsp, 
                                plot_rhoPhy=True, 
                                plot_antidiag=True, 
-                               plot_diag=True,
+                               plot_diag=False,
                                phase_90=True, 
                                plot_size = 'small')
                 plt.savefig('%s/%s.png'%(edi_path,site_id),dpi=600, 
@@ -145,7 +141,9 @@ for root, dirs, files in os.walk(edi_path):
             if saveCSVfiles:
                 if EF < 0:
                     df,ss = tree.exportForTransD(site_id,data_1D, 
-                                                 tr, errorfloor=-1)
+                                                 tr, errorfloor=-1,
+                                                 fcorr=False,
+                                                 min_errorfloor = min_errorfloor)
                     df.to_csv(r'%s/%s.csv'%(csv_path,site_id),
                               sep=',', index=False)
 
@@ -153,7 +151,7 @@ for root, dirs, files in os.walk(edi_path):
                     df,ss = tree.exportForTransD(site_id,data_1D, 
                                                  tr, errorfloor=EF)
                     df.to_csv('%s/%sEF%d.csv'%(csv_path,site_id,100*EF),
-                                                  sep=',', index=False)
+                                                   sep=',', index=False)
 
                 print('    Input .csv file saved');
 

@@ -64,7 +64,7 @@ import ensembles
 import MT 
 import plotPDFs
 
-files_path = '../projects/%s/transdMT/outfolder'%project
+files_path = f'../projects/{project}/transdMT/outfolder'
 
 print('Project: ',project)
 print(' Plot models: ',PlotModels)
@@ -74,9 +74,11 @@ print(' Plot Niblett-Bostick depth-transform: ',plot_niblettBostick)
 
 
 site_ids = []
-for file in os.listdir(files_path):
+for file in os.listdir(f'{files_path}/csv'):
     if file.endswith(".csv") and not file.endswith("log.csv"):
         site_ids.append(file[:-4])
+site_ids = np.sort(site_ids)
+
 
 for site_id in site_ids:             
     
@@ -84,7 +86,7 @@ for site_id in site_ids:
     
     if PlotModels:
         
-        samp_models_file =r'%s/%s_sampModels'%(files_path,site_id)
+        samp_models_file =f'{files_path}/samps/{site_id}_sampModels'
 
         print('    plotting models ensemble...')
 
@@ -110,7 +112,7 @@ for site_id in site_ids:
         plotPDFs.models(site_id,hist_norm_model,grid_bounds,stats, chPts[chPts>10])
         # if DepthLogScale: plt.ylabel('Log$_{10}$ Depth (m)')
         # else: plt.ylabel('Depth (m)')
-        plt.savefig('%s/%s_model.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+        plt.savefig('f{files_path}/plots/models/{site_id}_model.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
         plt.close('all')
         
 
@@ -128,7 +130,7 @@ for site_id in site_ids:
         print('    plotting response ensemble...')
 
         # read input data
-        dat_file = r'%s/%s.csv'%(files_path,site_id)
+        dat_file = f'{files_path}/csv/{site_id}.csv'
         obs_dat = ensembles.inputData(dat_file, appres=False)
         ff = obs_dat[:,0]
         logT= np.log10(1/ff)
@@ -138,7 +140,7 @@ for site_id in site_ids:
         dZ = obs_dat[:,3]
         rho, phy, drho, dphy = MT.z2rhophy(ff, Zr, Zi, dZ**2)
 
-        samp_resps_file = r'%s/%s_sampResps'%(files_path,site_id)
+        samp_resps_file = f'{files_path}/samps/{site_id}_sampResps'
         ensemble_resps = ensembles.sampResps(samp_resps_file, ff)
         #grid boundaries ([Tmin,Tmax,Rhomin,Rhomax,Phymin,Phymax,Zmin,Zmax] 
         Tmin=logT.min()
@@ -146,7 +148,7 @@ for site_id in site_ids:
         grid_bounds_resps = [Tmin-0.0,Tmax+0.0,0,4,0,90,-2,4]    
         
         if not fast_responses_plot and not PlotModels:
-            samp_models_file =r'%s/%s_sampModels'%(files_path,site_id)
+        	samp_models_file =f'{files_path}/samps/{site_id}_sampModels'
             ensemble_models, nLayers, lkh, maxLkh_mod, prior  = ensembles.sampModels(samp_models_file)
         
         if not fast_responses_plot:
@@ -259,7 +261,10 @@ for site_id in site_ids:
             
         
         plt.tight_layout() 
-        plt.savefig('%s/%s_fit.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+        if plotResp_Z:
+            plt.savefig(f'{files_path}/plots/fits/{site_id}_fitZ.png',dpi=300, bbox_inches="tight")
+        else:
+            plt.savefig(f'{files_path}/plots/fits/{site_id}_fit.png',dpi=300, bbox_inches="tight")
         plt.close('all')
 
 
@@ -277,7 +282,7 @@ for site_id in site_ids:
         try:
             nLayers
         except NameError:
-            samp_models_file =r'%s/%s_sampModels'%(files_path,site_id)
+            samp_models_file =f'{files_path}/{site_id}_sampModels'
             print('    loading models ensemble...')
             # load ensemble of models
             ensemble_models, nLayers, lkh, maxLkh_mod, prior  = ensembles.sampModels(samp_models_file)
@@ -286,7 +291,7 @@ for site_id in site_ids:
             ensemble_resps
         except NameError:
             # read input data
-            dat_file = r'%s/%s.csv'%(files_path,site_id)
+            dat_file = f'{files_path}/csv/{site_id}.csv'
             obs_dat = ensembles.inputData(dat_file, appres=False)
             ff = obs_dat[:,0]
             logT= np.log10(1/ff)
@@ -350,7 +355,7 @@ for site_id in site_ids:
         ax3.set_xlim([0.75 * nIt, nIt])
         ax3.axhline(np.median(lkh), c = 'r', ls = '--', 
                     label = 'median = %2.2f'%np.median(lkh), alpha=0.4)
-        ax3.set_ylabel('Normalized\nLog Likelihood')
+        ax3.set_ylabel('Negative\nLog Likelihood')
         ax3.legend(loc=1)
         
         weights = np.ones_like(lkh) / len(lkh)
@@ -361,7 +366,7 @@ for site_id in site_ids:
                  align='left', 
                  weights=weights)
         ax4.axvline(np.median(lkh), c = 'r', ls = '--',label = 'median')
-        ax4.set_title('Normalized Log Likelihood')
+        ax4.set_title('Negative Log Likelihood')
         ax4.set_ylabel('probability')
         # ax4.legend(loc=1)
         
@@ -393,5 +398,5 @@ for site_id in site_ids:
         plt.tight_layout()
 
 
-        plt.savefig('%s/%s_stats.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+        plt.savefig(f'{files_path}/plots/stats/{site_id}_stats.png',dpi=300, bbox_inches="tight")
         plt.close('all')

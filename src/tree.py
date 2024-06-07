@@ -121,6 +121,10 @@ def covar(d, vgExp, vgRho):
 
 
 def getC(data, tr, nsCov=None, noiseCovar=False):
+
+    # noiseCovar: in case a full covariance matrix is available from the 
+    # processing error. If True, nsCov needs to be provided
+	
     nF = len(data)
     attss = attMap(data, tr.atts)
     attss = np.array(attss).T
@@ -151,7 +155,7 @@ def getC(data, tr, nsCov=None, noiseCovar=False):
 
 
 
-def exportForTransD(siteId,data, tr, errorfloor=-1):
+def exportForTransD(siteId,data, tr, errorfloor=-1, fcorr = False, min_errorfloor = 0.01):
     nF = len(data)
     if errorfloor > 0:
         C = np.zeros((nF,nF))
@@ -165,15 +169,31 @@ def exportForTransD(siteId,data, tr, errorfloor=-1):
         
     else:
         C, ss = getC(data, tr)
+        # we use a minimum error floor of 1% in case the overall error is too small
+        # min_errorfloor = 0.01
+        for i in range(nF):
+            if np.log(1+min_errorfloor) > ss[i]:
+                C[i,i] = (np.log(1+min_errorfloor))**2
+            ss[i] = pd.Series(C[i,i]**0.5)
+			
+			
 
-    # Calculate inverse of C
-    D = linalg.inv(C)
-    #write to csv file    
+    if fcorr:
+        # Calculate inverse of C
+        # D = linalg.inv(C)
+        D = np.linalg.lstsq(C, np.identity(C.shape[0]))
+        print(D.shape)
+  
+    else:
+        D = np.diag(ss**-2)
+		
+    #write to csv file   
     ss=pd.Series(ss)
     df = pd.concat([data['freq'], data['ZdetRLn'], data['ZdetILn'], ss], axis=1)
     df = pd.concat([df, pd.DataFrame(D)], axis=1)
     columns = ['freq','Zr','Zi','std'] + ['D%i'%(i) for i in range(1,nF+1)]
     df.columns = columns
-    
-    return df,ss
+	
+	return df,ss
+
 

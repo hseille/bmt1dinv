@@ -565,12 +565,17 @@ def niblettBostick_depthTransform(rho, phy, T):
 
 
 
+def compute_x2(residual,std):
+    if type(residual) == np.float64:
+        x2 = (((residual/std)*(residual/std))) 
+    else:
+        x2 = (((residual/std)@(residual/std).T)) 
+    return x2
 
 def rms(obs_dat, resp):
-    
-    nfreq = obs_dat.shape[0]
-    msftRe = (obs_dat[:,1] - resp[:,0])**2 / obs_dat[:,3]**2
-    msftIm = (obs_dat[:,2] - resp[:,1])**2 / obs_dat[:,3]**2
-    msft = (np.sum(msftRe) + np.sum(msftIm))/(nfreq)
-    
-    return msft**0.5
+    residuals = np.r_[(obs_dat[:,1] - resp[:,0]), (obs_dat[:,2] - resp[:,1])]
+    std = np.r_[obs_dat[:,3],obs_dat[:,3]]
+    x2 = ((residuals/std)@(residuals/std).T) 
+    rms = (np.sqrt(x2 / len(residuals)))
+
+    return rms
