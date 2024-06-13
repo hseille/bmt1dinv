@@ -18,22 +18,21 @@ __status__ = "Beta"
 
 import pandas as pd
 import numpy as np
-from scipy import linalg
 
 
 class Dim_Tree():
     def __init__(self, con, left=None, right=None, p=None, isLeaf=False):
-        self.con = con   # condition / attribute upon the tree splits (None when Leaf)
-        self.left  = left   # left is for True condition (None when Leaf)
-        self.right = right   # right is for False condition (None when Leaf)
-        self.p = p   # (None when Split)
-        self.isLeaf = isLeaf   # boolean for Leaf of Split node
+        self.con = con          # condition / attribute upon the tree splits (None when Leaf)
+        self.left  = left       # left is for True condition (None when Leaf)
+        self.right = right      # right is for False condition (None when Leaf)
+        self.p = p              # (None when Split)
+        self.isLeaf = isLeaf    # boolean for Leaf of Split node
         
-    def vg(self, exp, rho):  # variogram parameters
+    def vg(self, exp, rho):     # variogram parameters
         self.vgExp = exp
         self.vgRho = rho
         
-    def atts(self,atts_list):  # attributes list
+    def atts(self,atts_list):   # attributes list
         self.atts = atts_list
 
 
@@ -135,7 +134,7 @@ def getC(data, tr, nsCov=None, noiseCovar=False):
         ns = np.diag(nsCov)**0.5
         ss = (ps**2 + ns **2)**0.5
     else:
-        ns = data['ZdetLnSd']  
+        ns = data['Z1DLnSd']  
         ss = (ps**2 + ns **2)**0.5
         
     C = np.zeros((nF,nF))
@@ -161,10 +160,10 @@ def exportForTransD(siteId,data, tr, errorfloor=-1, fcorr = False, min_errorfloo
         C = np.zeros((nF,nF))
         ss = np.zeros((nF))
         for i in range(nF):
-            if np.log(1+errorfloor) > data['ZdetLnSd'][i]:
+            if np.log(1+errorfloor) > data['Z1DLnSd'][i]:
                 C[i,i] = (np.log(1+errorfloor))**2
             else:
-                C[i,i] = (data['ZdetLnSd'][i])**2
+                C[i,i] = (data['Z1DLnSd'][i])**2
             ss[i] = pd.Series(C[i,i]**0.5)
         
     else:
@@ -180,7 +179,6 @@ def exportForTransD(siteId,data, tr, errorfloor=-1, fcorr = False, min_errorfloo
 
     if fcorr:
         # Calculate inverse of C
-        # D = linalg.inv(C)
         D = np.linalg.lstsq(C, np.identity(C.shape[0]))
         print(D.shape)
   
@@ -189,11 +187,11 @@ def exportForTransD(siteId,data, tr, errorfloor=-1, fcorr = False, min_errorfloo
 		
     #write to csv file   
     ss=pd.Series(ss)
-    df = pd.concat([data['freq'], data['ZdetRLn'], data['ZdetILn'], ss], axis=1)
+    df = pd.concat([data['freq'], data['Z1DRLn'], data['Z1DILn'], ss], axis=1)
     df = pd.concat([df, pd.DataFrame(D)], axis=1)
     columns = ['freq','Zr','Zi','std'] + ['D%i'%(i) for i in range(1,nF+1)]
     df.columns = columns
 	
-	return df,ss
+    return df,ss
 
 

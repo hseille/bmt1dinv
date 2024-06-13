@@ -26,7 +26,8 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
         plot_antidiag = True, 
         plot_diag = True,
         phase_90=False, 
-        plot_size='medium'):
+        plot_size='medium',
+        rho_lims = [-1, 4]):
     
     Z = dat[0]
     beta = dat[1][:,4]
@@ -42,12 +43,12 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
     beta_filt = MT.medianFilter(f, beta, medfiltsp)
     
     C = 10000/(4*np.pi)
-    ZdetR = C*np.exp(dat1D['ZdetRLn'].values) 
-    ZdetI = C*np.exp(dat1D['ZdetILn'].values) 
-    ZrERR = ((np.exp(dat1D['ZdetRLn'].values+ss) - np.exp(dat1D['ZdetRLn'].values-ss) )) / 2
-    ZiERR = ((np.exp(dat1D['ZdetILn'].values+ss) - np.exp(dat1D['ZdetILn'].values-ss) )) / 2  
+    Z1DR = C*np.exp(dat1D['Z1DRLn'].values) 
+    Z1DI = C*np.exp(dat1D['Z1DILn'].values) 
+    ZrERR = ((np.exp(dat1D['Z1DRLn'].values+ss) - np.exp(dat1D['Z1DRLn'].values-ss) )) / 2
+    ZiERR = ((np.exp(dat1D['Z1DILn'].values+ss) - np.exp(dat1D['Z1DILn'].values-ss) )) / 2  
     Zstd = C * 0.5 * (ZrERR + ZiERR)
-    # print(Zstd)
+
     
     if plot_size == 'small':
         fig = plt.figure(4,figsize=(3, 6))
@@ -63,10 +64,7 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
         rhoYX, phyYX, drhoYX, dphyYX = MT.z2rhophy(f, Z['ZYXR'],Z['ZYXI'],Z['ZYX.VAR'])
         rhoYY, phyYY, drhoYY, dphyYY = MT.z2rhophy(f, Z['ZYYR'],Z['ZYYI'],Z['ZYY.VAR'])
         
-        rho1D, phy1D, drho1D, dphy1D = MT.z2rhophy(f, ZdetR, ZdetI, (Zstd)**2)
-        
-        # print(drho1D**0.5)
-        
+        rho1D, phy1D, drho1D, dphy1D = MT.z2rhophy(f, Z1DR, Z1DI, (Zstd)**2)
 
         
         minimRho = np.log10(min(min(rhoXY),min(rhoYX)))
@@ -97,7 +95,7 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
                     elinewidth=0.6,markersize=5 ,
                     capsize=2,capthick=0.6,mec='k',mew=0.5, alpha=0.2)
         plt.errorbar(np.log10(1/f), np.log10(rho1D), yerr = logERR_1D, 
-                fmt='k.',label= 'det', zorder=31, 
+                fmt='k.',label= '1D', zorder=31, 
                 elinewidth=0.6,markersize=3 ,
                 capsize=2,capthick=0.6,mec='k',mew=0.5, alpha=0.8)
         plt.ylabel('Log$_{10}$ $\\rho_{app}$ ($\Omega$.m)',fontsize=ftsz)
@@ -106,7 +104,8 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
         plt.xticks(np.arange(-5,5,1),labels=[])
         plt.xlim(Tmin-0.5,Tmax+0.5)        
         plt.yticks(np.arange(-2,6,1),fontsize=ftsz)
-        plt.ylim(minimRho-0.5,maximRho+0.5)
+        # plt.ylim(minimRho-0.5,maximRho+0.5)
+        plt.ylim(rho_lims[0], rho_lims[1])
         plt.legend(fontsize=ftsz-2, loc=0, ncol=2)
         
         if phase_90:
@@ -180,7 +179,7 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
     
     
     
-    #TO PLOT IMPEDANCES!!!  
+    #IMPEDANCES 
     else:
         plt.subplot(10,1,(1,3))
         plt.errorbar(np.log10(1/f), np.log(Z['ZXYR'].values), 
@@ -191,7 +190,6 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
                      fmt='b.',label= 'Zyx',zorder=32, elinewidth=1,markersize=7)
         plt.ylabel('Log Zr ($\Omega$)')
         plt.title('IMPEDANCE Z (Re)',fontsize=10)
-        #plt.tick_params(axis='x',labelbottom='off')
         plt.grid(linestyle=':')
         plt.xlim(Tmin-0.5,Tmax+0.5)
         plt.legend(fontsize=8)
@@ -213,7 +211,6 @@ def plot_edi(site_id, dat1D, ss, dat, medfiltsp,
 
 
         plt.subplot(10,1,(7,8))
-        #plt.plot(logT,beta, 'k.')
         plt.errorbar(np.log10(1/f), beta, yerr = 2*beta_err,
                 fmt='k.', elinewidth=0.6,markersize=5 ,
                 capsize=2,capthick=0.6,mec='k',mew=0.5, alpha=0.8)

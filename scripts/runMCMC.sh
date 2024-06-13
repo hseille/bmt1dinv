@@ -5,14 +5,15 @@ params='inversionParameters.txt'
 
 
 
-echo "\n" 
+echo " # Trans-dimensional MCMC 1D Inversion of Magnetotelluric Data #" 
 
- # Trans-dimensional MCMC 1D Inversion of Magnetotelluric Data #
+
+cd ../projects/$project/transdMT/
 
 
 #read transdMT inversion parameters file
 echo ' '
-echo '\nInversion parameters:'
+echo 'Inversion parameters:'
 while IFS='=' read -r param val
 do
    i=$((i+1))
@@ -30,21 +31,23 @@ do
 done < "$params"
 
 
+input_dir=../projects/$project/csv
+output_dir=../projects/$project/transdMT
 
 
-cd ../projects/$project/transdMT
+cd ../../../scripts
 
-input_dir=../csv
-output_dir=outfolder
+# create output folders
+mkdir $output_dir/outfolder/samps/ $output_dir/outfolder/plots/ $output_dir/outfolder/logs/ $output_dir/outfolder/csv/ 
 
 
 #Run the trans-d
-for file in $input_dir/*.csv; do #loop1
+for file in $input_dir/*.csv; do 
 	siteid=$(basename "$file" .csv)
-	mkdir -p ${output_dir}/${siteid}
-	bash multithreads.sh $params $siteid $input_dir $output_dir $P1 $P2 $P3 $P4 $P5 $P6 $P7 $P8 $P9 $P10
-done #end loop1
+	mkdir -p ${output_dir}/outfolder/${siteid}
 
-echo "goodbye!
-"
+	bash multithreads.sh $params $siteid $input_dir $output_dir $P1 $P2 $P3 $P4 $P5 $P6 $P7 $P8 $P9 $P10
+
+done 
+echo "goodbye!"
 

@@ -25,16 +25,21 @@ __status__ = "Beta"
 # specify project folder name
 project = 'example'
 
-# error floor to use, NOT in percent! 
-# -1 indicates that dimensionality errors are used
-# otherwise it uses the value specified
+# componnent to invert for ('det', 'xy', 'yx')
+inv_comp = 'det'
+
+# error floor to use:
+#   -1 indicates that dimensionality errors will be used:   EF = -1
+#   otherwise it uses the value specified                   EF = 0.05
 EF = -1
 # EF = 0.05
-# Decide on a minimum error floor to apply to the data when dimensionality errors are used
+# Define a minimum error floor to apply to the data when dimensionality errors are used
 min_errorfloor = 0.01
 
-# it defines the lenght of the window, that will be used to perform the
-#    median filter, in log scale, along the frequency axis
+# medfiltsp defines the lenght of the window (in log scale, along the frequency axis) 
+# to smooth the phase tensor parameters beta and alpha, that will be used to perform 
+# the estimation of dimensionality errors. It prevents to have noisy points assiging
+# large errors to the data
 # medfiltsp = 0.5 => median filter along half a frequency decade
 medfiltsp = 0.5
 
@@ -106,7 +111,7 @@ for root, dirs, files in os.walk(edi_path):
             print('    Loading EDI file... ')
 
             # Create Data file
-            site_id, data_1D, dataMT = MT.getData(edi_file_path, medfiltsp)
+            site_id, data_1D, dataMT = MT.getData(edi_file_path, medfiltsp, inv_comp)
             
             # Assess data_1D
             if data_1D.isnull().values.any():
@@ -131,7 +136,8 @@ for root, dirs, files in os.walk(edi_path):
                                plot_antidiag=True, 
                                plot_diag=False,
                                phase_90=True, 
-                               plot_size = 'small')
+                               plot_size = 'small',
+                               rho_lims = [-1, 4])
                 plt.savefig('%s/%s.png'%(edi_path,site_id),dpi=600, 
                             bbox_inches="tight")
                 plt.close('all')

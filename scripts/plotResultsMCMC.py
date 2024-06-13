@@ -33,11 +33,10 @@ if PlotModels:
 PlotResponses = True
 if PlotResponses:
     plotResp_Z = False
-    fast_responses_plot = True
 
 Plot_inversionStatistics = True
 
-plot_niblettBostick =False
+plot_niblettBostick = False
 
 
 # =============================================================================
@@ -112,7 +111,7 @@ for site_id in site_ids:
         plotPDFs.models(site_id,hist_norm_model,grid_bounds,stats, chPts[chPts>10])
         # if DepthLogScale: plt.ylabel('Log$_{10}$ Depth (m)')
         # else: plt.ylabel('Depth (m)')
-        plt.savefig('f{files_path}/plots/models/{site_id}_model.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+        plt.savefig(f'{files_path}/plots/models/{site_id}_model.png',dpi=300, bbox_inches="tight")
         plt.close('all')
         
 
@@ -142,103 +141,48 @@ for site_id in site_ids:
 
         samp_resps_file = f'{files_path}/samps/{site_id}_sampResps'
         ensemble_resps = ensembles.sampResps(samp_resps_file, ff)
-        #grid boundaries ([Tmin,Tmax,Rhomin,Rhomax,Phymin,Phymax,Zmin,Zmax] 
         Tmin=logT.min()
         Tmax=logT.max()
         grid_bounds_resps = [Tmin-0.0,Tmax+0.0,0,4,0,90,-2,4]    
         
-        if not fast_responses_plot and not PlotModels:
-        	samp_models_file =f'{files_path}/samps/{site_id}_sampModels'
-            ensemble_models, nLayers, lkh, maxLkh_mod, prior  = ensembles.sampModels(samp_models_file)
-        
-        if not fast_responses_plot:
-            if plotResp_Z:
-                print('    computing and plotting response PDF...')
-                #compute histograms of the posteriors for the responses
-                histZr,histZi = ensembles.histResponses(ensemble_models, 
-                                                        grid_bounds_resps,
-                                                        nRho=300, 
-                                                        nT=100, 
-                                                        nModels=100,
-                                                        datatype='Z')
-            else:
-                print('    computing and plotting response PDF...')
-                #compute histograms of the posteriors for the responses
-                histRho,histPhy = ensembles.histResponses(ensemble_models, 
-                                                            grid_bounds_resps,
-                                                            nRho=300, 
-                                                            nT=100, 
-                                                            nModels=100,
-                                                            datatype='rhoPhy')
 
         fig = plt.figure(2, figsize=(4,5))
         
         plt.subplot(7,1,(1,3))
-        if not fast_responses_plot:
-            if plotResp_Z:
-                plotPDFs.responses(site_id,histZr,grid_bounds_resps, 
-                                   datatype = 'Z')
-                logERR = ((np.log10(Zr+dZ)-np.log10(Zr-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zr), yerr = logERR, 
+
+
+        if plotResp_Z:
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='Zr')
+            logERR = ((np.log10(Zr+dZ)-np.log10(Zr-dZ)))*0.5
+            plt.errorbar(logT, np.log10(Zr), yerr = logERR, 
+                     fmt='ko',zorder=32, elinewidth=0.7,
+                     markersize=1, capsize=1)
+        else:
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='rho')
+            logERR = ((np.log10(rho+drho)-np.log10(rho-drho)))*0.5
+            plt.errorbar(logT, np.log10(rho), yerr = logERR, 
                          fmt='ko',zorder=32, elinewidth=0.7,
                          markersize=1, capsize=1)
-            else:
-                plotPDFs.responses(site_id,histRho,grid_bounds_resps, 
-                                   datatype = 'rho')
-                logERR = ((np.log10(rho+drho)-np.log10(rho-drho)))*0.5
-                plt.errorbar(logT, np.log10(rho), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-        else:
-            if plotResp_Z:
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='Zr')
-                logERR = ((np.log10(Zr+dZ)-np.log10(Zr-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zr), yerr = logERR, 
+        plt.xlim(grid_bounds_resps[0]-0.1,grid_bounds_resps[1]+0.1)
+
+
+        if plotResp_Z:
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='Zi')
+            logERR = ((np.log10(Zi+dZ)-np.log10(Zi-dZ)))*0.5
+            plt.errorbar(logT, np.log10(Zi), yerr = logERR, 
                          fmt='ko',zorder=32, elinewidth=0.7,
                          markersize=1, capsize=1)
-            else:
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='rho')
-                logERR = ((np.log10(rho+drho)-np.log10(rho-drho)))*0.5
-                plt.errorbar(logT, np.log10(rho), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-
-
-
-        
-        if not fast_responses_plot:
-            if plotResp_Z:
-                plotPDFs.responses(site_id,histZi,grid_bounds_resps, 
-                                   datatype = 'Z')
-                logERR = ((np.log10(Zi+dZ)-np.log10(Zi-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zi), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-            else:
-                plt.subplot(7,1,(4,5))
-                plotPDFs.responses(site_id,histPhy,grid_bounds_resps, 
-                                   datatype = 'phy')
-                plt.errorbar(logT, phy, yerr = dphy, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
         else:
-            if plotResp_Z:
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='Zi')
-                logERR = ((np.log10(Zi+dZ)-np.log10(Zi-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zi), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-            else:
-                plt.subplot(7,1,(4,5))
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='phy')
-                plt.errorbar(logT, phy, yerr = dphy, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-
+            plt.subplot(7,1,(4,5))
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='phy')
+            plt.errorbar(logT, phy, yerr = dphy, 
+                         fmt='ko',zorder=32, elinewidth=0.7,
+                         markersize=1, capsize=1)
+        plt.xlim(grid_bounds_resps[0]-0.1,grid_bounds_resps[1]+0.1)
         
         if plot_niblettBostick:
             ax=plt.subplot(7,1,(6,7))
@@ -250,13 +194,14 @@ for site_id in site_ids:
             plt.ylabel('Depth (m)');plt.ylim([1, 2*depth_nb[-1]])
             plt.xlabel('Log$_{10}$ Period (sec)')
             plt.yticks([10,100,1000,10000,100000])
-            plt.colorbar(ticks=[],drawedges=False, shrink=0.001)
-            plt.title('Niblett-Bostick Depth Transform',fontsize=12)
+            # plt.colorbar(ticks=[],drawedges=False, shrink=0.001)
+            plt.title('Niblett-Bostick Depth Transform',fontsize=10)
             
             plt.ylim(10,100000)
             plt.xticks(np.arange(-5,5))
-            plt.xlim(grid_bounds_resps[0],grid_bounds_resps[1])
+            plt.xlim(grid_bounds_resps[0]-0.1,grid_bounds_resps[1]+0.1)
         else: 
+            
             plt.xlabel('Log$_{10}$ Period (sec)')
             
         
@@ -276,7 +221,7 @@ for site_id in site_ids:
 
         
         
-        params_file = './inversionParameters.txt'
+        params_file = f'../projects/{project}/transdMT/inversionParameters.txt'
         nChains, nIt, samples_perChain, rhoMin, rhoMax = ensembles.read_invParams(params_file)
 
         try:
