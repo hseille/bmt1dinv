@@ -24,7 +24,6 @@ import MT
 
 
 
-
 def models(siteid,hist_norm_model,grid_bounds,stats, chPts):
     
     
@@ -42,20 +41,19 @@ def models(siteid,hist_norm_model,grid_bounds,stats, chPts):
     - plot
     
     Options:
-    - save plot ? no
+    - save plot 
     
     """
     fig = plt.figure(1, figsize=(4,4.2))
 
 
     ax1 = fig.add_axes([0.18,0.1,0.50,0.8])   # PDF model
-    ax2 = fig.add_axes([0.7,0.1,0.15,0.8])   # chpT
+    ax2 = fig.add_axes([0.7,0.1,0.15,0.8])    # chPts
     ax3 = fig.add_axes([0.87,0.1,0.02,0.8])   # colorbar
     
     ax2.set_xticklabels([])
     ax2.set_yticklabels([])
 
-    # ax1.text(-4.5,30, 'b)', fontsize=12)
 
     color = 'jet'
     jetBig = matplotlib.cm.get_cmap(color, 256)
@@ -89,10 +87,7 @@ def models(siteid,hist_norm_model,grid_bounds,stats, chPts):
     ax1.grid(linestyle=':')
     ax1.set_ylabel('Depth (m)');
     ax1.set_xlabel('Log$_{10}$ Resistivity ($\Omega$.m)')
-    # ax1.tick_params(axis='x',top='on')
-    # ax1.tick_params(axis='x',labeltop='off')
     ax1.set_title('%s'%siteid)
-    #ax1.legend(loc=3,framealpha = 1)
     
     nbins = int(abs(int(grid_bounds[3])-int(grid_bounds[2])) / 100)
     
@@ -108,72 +103,11 @@ def models(siteid,hist_norm_model,grid_bounds,stats, chPts):
     
     fig.colorbar(im,cax=ax3, 
                  ticks=[0,-1,-2,-3,-4],
-                 label = 'Log$_{10}$ PDF')#, orientation = 'horizontal')
-
-    #plt.tight_layout()
-    
-   
-    
-    
+                 label = 'Log$_{10}$ PDF')
     
 
-def responses(siteid, histResp, grid_bounds_resps, datatype='rho',colorbar=True):
-    
-    """
-    Plot PDF of responses
 
-    Input:
-    All the inputs are outputs of the functions posteriorHistograms.py
-    - site Id
-    - histogram
-    - grid_bounds: boundaries of the histogram (min/max resistivity and depth)
-
-    
-    Output:
-    - plot
-    
-    Options:
-    - save plot ? no
-    
-    """
-
-    color = 'jet'
-    jetBig = matplotlib.cm.get_cmap(color, 256)
-    new_color = jetBig(np.linspace(0.05, 0.85, 256))
-    endTransparency=np.linspace(0,1,100)
-    new_color[:100,3] = endTransparency
-    color = matplotlib.colors.ListedColormap(new_color)
-
-    # Clip histogram for better visualisation
-    h1 = np.clip(histResp, 0.001, 0.2)
-    
-    if datatype == 'rho':  
-        grid_bounds = [grid_bounds_resps[0],grid_bounds_resps[1],
-                       grid_bounds_resps[2],grid_bounds_resps[3]]
-    if datatype == 'phy':  
-        grid_bounds = [grid_bounds_resps[0],grid_bounds_resps[1],
-                       grid_bounds_resps[4],grid_bounds_resps[5]]
-    if datatype == 'Z':  
-        grid_bounds = [grid_bounds_resps[0],grid_bounds_resps[1],
-                       grid_bounds_resps[6],grid_bounds_resps[7]]
-
-    im = plt.imshow(np.log10(h1), interpolation = 'bicubic', 
-                    cmap=color, 
-                    extent=grid_bounds, 
-                    aspect='auto')
-
-    if datatype == 'rho':  
-        plt.ylabel('Log$_{10}$ App. Res.($\Omega$.m)');plt.title('%s'%siteid)
-    if datatype == 'phy':  
-        plt.ylabel('Phase (degrees)'), plt.yticks([0,45,90])
-    if datatype == 'Z':    
-        plt.ylabel('Log$_{10}$ Z ($\Omega$)');plt.title('MT%s'%siteid)
-    plt.xticks(np.arange(-5,5))
-    plt.grid(linestyle=':')
-    # plt.colorbar(im,ticks=[0,-1,-2,-3,-4],label = 'Log$_{10}$ PDF')
-
-
-def responses_fast(siteid, freqs, ensemble, datatype='rho'):
+def responses(siteid, freqs, ensemble, datatype='rho'):
     
     """
     Plot responses

@@ -38,27 +38,28 @@ sys.path.append("../src")
 import ensembles
 
 
-files_path = '../projects/%s/transdMT/outfolder'%project
+files_path = f'../projects/{project}/transdMT/outfolder'
 
 site_ids = []
-for file in os.listdir(files_path):
+for file in os.listdir(f'{files_path}/csv'):
     if file.endswith(".csv") and not file.endswith("log.csv"):
         site_ids.append(file[:-4])
+site_ids = np.sort(site_ids)
 
 
-params_file = './inversionParameters.txt'
+params_file = f'../projects/{project}/transdMT/inversionParameters.txt'
 nChains, nIt, samples_perChain, rhoMin, rhoMax = ensembles.read_invParams(params_file)
 
 print('Project: ',project)
 for site_id in site_ids:             
     
-    print(' Plotting convergeance statistics for MT site %s...'%site_id)
+    print(f' Plotting convergeance statistics for MT site {site_id}...')
     
     thinning = 1000
     
-    log_file = '%s/%s_log.csv'%(files_path,site_id)
+    log_file = f'{files_path}/logs/{site_id}_log.csv'
     
-    assert exists(log_file), '   convergence statistics for MT site %s not existing!!'%site_id
+    assert exists(log_file), f'   convergence statistics for MT site {site_id} not existing!!'
     df_obs = pd.read_csv(log_file, skiprows=0,header=None)
     for i in range(0,nChains):
         df_obs = df_obs.drop(i*nIt/thinning +i)
@@ -66,26 +67,22 @@ for site_id in site_ids:
     df_obs = df_obs.reset_index()
     df_obs = np.array(df_obs, dtype=float)
     
-    #n_maxChains = 20
-    # it_num = np.linspace(0, nIt, int(nIt/thinning), dtype=int)
+
     it_num = df_obs[:int(nIt/thinning),1]
     
     plt.figure(1,figsize=(8,4))
     
     plt.subplot(211)
     for i in range(0,nChains):
-        # plt.semilogy(it_num,df_obs[' nll'][int(i*nIt/thinning):int((i+1)*nIt/thinning)],'-', lw=0.1)
-        plt.semilogy(it_num,df_obs[int(i*nIt/thinning):int((i+1)*nIt/thinning),2],'-', lw=0.1)
+        plt.semilogy(it_num,df_obs[int(i*nIt/thinning):int((i+1)*nIt/thinning),3],'-', lw=0.1)
     plt.xlim([0,nIt])
     plt.ylabel('Negative\nLog Likelihood')
-    plt.title('MT site %s - MCMC Convergeance - %d chains - %dk it/chain'
-              %(site_id, nChains, nIt/1000))
+    plt.title(f'MT site {site_id} - MCMC Convergeance - {nChains} chains - {nIt/1000}k it/chain')
     plt.axvline(0.75*nIt, c='k', label = 'end of\nburn-in phase')
     plt.legend(loc=1, fontsize='small')
 
     plt.subplot(212)
     for i in range(0,nChains):
-        # plt.semilogy(it_num,df_obs[' nll'][int(i*nIt/thinning):int((i+1)*nIt/thinning)],'-', lw=0.1)
         plt.plot(it_num,df_obs[int(i*nIt/thinning):int((i+1)*nIt/thinning),2],'-', lw=0.1)
     plt.xlim([0,nIt])
     plt.ylabel('Number of\ninterfaces')
@@ -95,7 +92,7 @@ for site_id in site_ids:
     plt.tight_layout
 
 
-    plt.savefig('%s/%s_convergence.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+    plt.savefig(f'{files_path}/plots/convergence/{site_id}_convergence.png',dpi=300, bbox_inches="tight")
     plt.close('all')
 
 

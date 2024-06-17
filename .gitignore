@@ -2,8 +2,15 @@ __pycache__/
 
 *.png
 
+.DS_Store
+
 *.csv
 !ipfile.csv
 
 *sampModels
 *sampResps
+
+run_single_petrichor.sh
+runMCMC_petrichor.sh
+
+projects/oakdam/

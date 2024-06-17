@@ -33,11 +33,10 @@ if PlotModels:
 PlotResponses = True
 if PlotResponses:
     plotResp_Z = False
-    fast_responses_plot = True
 
 Plot_inversionStatistics = True
 
-plot_niblettBostick =False
+plot_niblettBostick = False
 
 
 # =============================================================================
@@ -64,7 +63,7 @@ import ensembles
 import MT 
 import plotPDFs
 
-files_path = '../projects/%s/transdMT/outfolder'%project
+files_path = f'../projects/{project}/transdMT/outfolder'
 
 print('Project: ',project)
 print(' Plot models: ',PlotModels)
@@ -74,9 +73,11 @@ print(' Plot Niblett-Bostick depth-transform: ',plot_niblettBostick)
 
 
 site_ids = []
-for file in os.listdir(files_path):
+for file in os.listdir(f'{files_path}/csv'):
     if file.endswith(".csv") and not file.endswith("log.csv"):
         site_ids.append(file[:-4])
+site_ids = np.sort(site_ids)
+
 
 for site_id in site_ids:             
     
@@ -84,7 +85,7 @@ for site_id in site_ids:
     
     if PlotModels:
         
-        samp_models_file =r'%s/%s_sampModels'%(files_path,site_id)
+        samp_models_file =f'{files_path}/samps/{site_id}_sampModels'
 
         print('    plotting models ensemble...')
 
@@ -110,7 +111,7 @@ for site_id in site_ids:
         plotPDFs.models(site_id,hist_norm_model,grid_bounds,stats, chPts[chPts>10])
         # if DepthLogScale: plt.ylabel('Log$_{10}$ Depth (m)')
         # else: plt.ylabel('Depth (m)')
-        plt.savefig('%s/%s_model.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+        plt.savefig(f'{files_path}/plots/models/{site_id}_model.png',dpi=300, bbox_inches="tight")
         plt.close('all')
         
 
@@ -128,7 +129,7 @@ for site_id in site_ids:
         print('    plotting response ensemble...')
 
         # read input data
-        dat_file = r'%s/%s.csv'%(files_path,site_id)
+        dat_file = f'{files_path}/csv/{site_id}.csv'
         obs_dat = ensembles.inputData(dat_file, appres=False)
         ff = obs_dat[:,0]
         logT= np.log10(1/ff)
@@ -138,105 +139,50 @@ for site_id in site_ids:
         dZ = obs_dat[:,3]
         rho, phy, drho, dphy = MT.z2rhophy(ff, Zr, Zi, dZ**2)
 
-        samp_resps_file = r'%s/%s_sampResps'%(files_path,site_id)
+        samp_resps_file = f'{files_path}/samps/{site_id}_sampResps'
         ensemble_resps = ensembles.sampResps(samp_resps_file, ff)
-        #grid boundaries ([Tmin,Tmax,Rhomin,Rhomax,Phymin,Phymax,Zmin,Zmax] 
         Tmin=logT.min()
         Tmax=logT.max()
         grid_bounds_resps = [Tmin-0.0,Tmax+0.0,0,4,0,90,-2,4]    
         
-        if not fast_responses_plot and not PlotModels:
-            samp_models_file =r'%s/%s_sampModels'%(files_path,site_id)
-            ensemble_models, nLayers, lkh, maxLkh_mod, prior  = ensembles.sampModels(samp_models_file)
-        
-        if not fast_responses_plot:
-            if plotResp_Z:
-                print('    computing and plotting response PDF...')
-                #compute histograms of the posteriors for the responses
-                histZr,histZi = ensembles.histResponses(ensemble_models, 
-                                                        grid_bounds_resps,
-                                                        nRho=300, 
-                                                        nT=100, 
-                                                        nModels=100,
-                                                        datatype='Z')
-            else:
-                print('    computing and plotting response PDF...')
-                #compute histograms of the posteriors for the responses
-                histRho,histPhy = ensembles.histResponses(ensemble_models, 
-                                                            grid_bounds_resps,
-                                                            nRho=300, 
-                                                            nT=100, 
-                                                            nModels=100,
-                                                            datatype='rhoPhy')
 
         fig = plt.figure(2, figsize=(4,5))
         
         plt.subplot(7,1,(1,3))
-        if not fast_responses_plot:
-            if plotResp_Z:
-                plotPDFs.responses(site_id,histZr,grid_bounds_resps, 
-                                   datatype = 'Z')
-                logERR = ((np.log10(Zr+dZ)-np.log10(Zr-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zr), yerr = logERR, 
+
+
+        if plotResp_Z:
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='Zr')
+            logERR = ((np.log10(Zr+dZ)-np.log10(Zr-dZ)))*0.5
+            plt.errorbar(logT, np.log10(Zr), yerr = logERR, 
+                     fmt='ko',zorder=32, elinewidth=0.7,
+                     markersize=1, capsize=1)
+        else:
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='rho')
+            logERR = ((np.log10(rho+drho)-np.log10(rho-drho)))*0.5
+            plt.errorbar(logT, np.log10(rho), yerr = logERR, 
                          fmt='ko',zorder=32, elinewidth=0.7,
                          markersize=1, capsize=1)
-            else:
-                plotPDFs.responses(site_id,histRho,grid_bounds_resps, 
-                                   datatype = 'rho')
-                logERR = ((np.log10(rho+drho)-np.log10(rho-drho)))*0.5
-                plt.errorbar(logT, np.log10(rho), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-        else:
-            if plotResp_Z:
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='Zr')
-                logERR = ((np.log10(Zr+dZ)-np.log10(Zr-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zr), yerr = logERR, 
+        plt.xlim(grid_bounds_resps[0]-0.1,grid_bounds_resps[1]+0.1)
+
+
+        if plotResp_Z:
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='Zi')
+            logERR = ((np.log10(Zi+dZ)-np.log10(Zi-dZ)))*0.5
+            plt.errorbar(logT, np.log10(Zi), yerr = logERR, 
                          fmt='ko',zorder=32, elinewidth=0.7,
                          markersize=1, capsize=1)
-            else:
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='rho')
-                logERR = ((np.log10(rho+drho)-np.log10(rho-drho)))*0.5
-                plt.errorbar(logT, np.log10(rho), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-
-
-
-        
-        if not fast_responses_plot:
-            if plotResp_Z:
-                plotPDFs.responses(site_id,histZi,grid_bounds_resps, 
-                                   datatype = 'Z')
-                logERR = ((np.log10(Zi+dZ)-np.log10(Zi-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zi), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-            else:
-                plt.subplot(7,1,(4,5))
-                plotPDFs.responses(site_id,histPhy,grid_bounds_resps, 
-                                   datatype = 'phy')
-                plt.errorbar(logT, phy, yerr = dphy, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
         else:
-            if plotResp_Z:
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='Zi')
-                logERR = ((np.log10(Zi+dZ)-np.log10(Zi-dZ)))*0.5
-                plt.errorbar(logT, np.log10(Zi), yerr = logERR, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-            else:
-                plt.subplot(7,1,(4,5))
-                plotPDFs.responses_fast(site_id, ff, ensemble_resps, 
-                                    datatype='phy')
-                plt.errorbar(logT, phy, yerr = dphy, 
-                             fmt='ko',zorder=32, elinewidth=0.7,
-                             markersize=1, capsize=1)
-
+            plt.subplot(7,1,(4,5))
+            plotPDFs.responses(site_id, ff, ensemble_resps, 
+                                datatype='phy')
+            plt.errorbar(logT, phy, yerr = dphy, 
+                         fmt='ko',zorder=32, elinewidth=0.7,
+                         markersize=1, capsize=1)
+        plt.xlim(grid_bounds_resps[0]-0.1,grid_bounds_resps[1]+0.1)
         
         if plot_niblettBostick:
             ax=plt.subplot(7,1,(6,7))
@@ -248,21 +194,22 @@ for site_id in site_ids:
             plt.ylabel('Depth (m)');plt.ylim([1, 2*depth_nb[-1]])
             plt.xlabel('Log$_{10}$ Period (sec)')
             plt.yticks([10,100,1000,10000,100000])
-            plt.colorbar(ticks=[],drawedges=False, shrink=0.001)
-            plt.title('Niblett-Bostick Depth Transform',fontsize=12)
+            # plt.colorbar(ticks=[],drawedges=False, shrink=0.001)
+            plt.title('Niblett-Bostick Depth Transform',fontsize=10)
             
             plt.ylim(10,100000)
             plt.xticks(np.arange(-5,5))
-            plt.xlim(grid_bounds_resps[0],grid_bounds_resps[1])
+            plt.xlim(grid_bounds_resps[0]-0.1,grid_bounds_resps[1]+0.1)
         else: 
+            
             plt.xlabel('Log$_{10}$ Period (sec)')
             
         
         plt.tight_layout() 
         if plotResp_Z:
-            plt.savefig('%s/%s_fitZ.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+            plt.savefig(f'{files_path}/plots/fits/{site_id}_fitZ.png',dpi=300, bbox_inches="tight")
         else:
-            plt.savefig('%s/%s_fit.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+            plt.savefig(f'{files_path}/plots/fits/{site_id}_fit.png',dpi=300, bbox_inches="tight")
         plt.close('all')
 
 
@@ -274,13 +221,13 @@ for site_id in site_ids:
 
         
         
-        params_file = './inversionParameters.txt'
+        params_file = f'../projects/{project}/transdMT/inversionParameters.txt'
         nChains, nIt, samples_perChain, rhoMin, rhoMax = ensembles.read_invParams(params_file)
 
         try:
             nLayers
         except NameError:
-            samp_models_file =r'%s/%s_sampModels'%(files_path,site_id)
+            samp_models_file =f'{files_path}/{site_id}_sampModels'
             print('    loading models ensemble...')
             # load ensemble of models
             ensemble_models, nLayers, lkh, maxLkh_mod, prior  = ensembles.sampModels(samp_models_file)
@@ -289,7 +236,7 @@ for site_id in site_ids:
             ensemble_resps
         except NameError:
             # read input data
-            dat_file = r'%s/%s.csv'%(files_path,site_id)
+            dat_file = f'{files_path}/csv/{site_id}.csv'
             obs_dat = ensembles.inputData(dat_file, appres=False)
             ff = obs_dat[:,0]
             logT= np.log10(1/ff)
@@ -353,7 +300,7 @@ for site_id in site_ids:
         ax3.set_xlim([0.75 * nIt, nIt])
         ax3.axhline(np.median(lkh), c = 'r', ls = '--', 
                     label = 'median = %2.2f'%np.median(lkh), alpha=0.4)
-        ax3.set_ylabel('Normalized\nLog Likelihood')
+        ax3.set_ylabel('Negative\nLog Likelihood')
         ax3.legend(loc=1)
         
         weights = np.ones_like(lkh) / len(lkh)
@@ -396,5 +343,5 @@ for site_id in site_ids:
         plt.tight_layout()
 
 
-        plt.savefig('%s/%s_stats.png'%(files_path,site_id),dpi=300, bbox_inches="tight")
+        plt.savefig(f'{files_path}/plots/stats/{site_id}_stats.png',dpi=300, bbox_inches="tight")
         plt.close('all')

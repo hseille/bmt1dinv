@@ -61,7 +61,8 @@ def readEDI(file_name):
             if any("DATAID" in s for s in words):
                 words = ''.join(words)
                 #print words
-                site_id = re.search('\"([^"]+)', words).group(1)
+                #site_id = re.search('\"([^"]+)', words).group(1)
+                site_id = words.split('=')[1].replace('"','')
 
             #READ NUMBER OF FREQUENCIES
             if any("NFREQ" in s for s in words):
@@ -336,6 +337,27 @@ def Zinv(Z):
 
 
 
+def Zxy(Z):
+    
+    ZxyR = (Z['ZXYR'].values)
+    ZxyI = (Z['ZXYI'].values)
+    Zxy_sd = (Z['ZXY.VAR'].values)**0.5
+    a = (ZxyR**2 + ZxyI**2)**0.5
+    lnSd2 = Zxy_sd/a
+    
+    return ZxyR, ZxyI, Zxy_sd, lnSd2
+
+
+def Zyx(Z):
+    
+    ZyxR = abs(Z['ZYXR'].values)
+    ZyxI = abs(Z['ZYXI'].values)
+    Zyx_sd = (Z['ZYX.VAR'].values)**0.5
+    a = (ZyxR**2 + ZyxI**2)**0.5
+    lnSd2 = Zyx_sd/a
+    
+    return ZyxR, ZyxI, Zyx_sd, lnSd2
+
 
 def Zdet(Z):
     
@@ -344,6 +366,7 @@ def Zdet(Z):
     
     Zdet = Zxx*Zyy - Zxy*Zyx = Zdet_1 - Zdet_2
     """
+       
     nF = len(Z)
     # Calculate determinant 
     mat = np.zeros((2,2,nF), complex)
@@ -358,19 +381,17 @@ def Zdet(Z):
     lnSd = np.zeros((nF))
     
     for freq_det in range(len(Z)):
+
         det = np.linalg.det(mat[:,:,freq_det])**0.5
         ZdetR[freq_det] = det.real
         ZdetI[freq_det] = det.imag
-    
-    
-    # Calculate determinant std dev.
-    # (log transform of) x + dx --> log(x) + (log(1+dx/x) - log(1-dx/x))/(2*sqrt(2))
-    cent = (ZdetR**2 + ZdetI**2)**0.5
-    sd = (Z['ZXX.VAR'] + Z['ZXY.VAR'] + Z['ZYX.VAR'] + Z['ZYY.VAR'])**0.5
-    lnSd = (np.log(1+sd/cent) - np.log(1-sd/cent))/(2*np.sqrt(2))
-    
-    return ZdetR ,ZdetI, sd, lnSd
 
+    # Calculate determinant std dev.
+    sd = (Z['ZXX.VAR'] + Z['ZXY.VAR'] + Z['ZYX.VAR'] + Z['ZYY.VAR'])**0.5
+    a = (ZdetR**2 + ZdetI**2)**0.5
+    lnSd2 = sd/a
+    
+    return np.abs(ZdetR) ,np.abs(ZdetI), sd, lnSd2
 
 
 def keepMax(x):
@@ -385,12 +406,32 @@ def keepMax(x):
 
 
 
+def remove_masked_data(Z, component = 'det'):
+    
+    if component == 'xy':
+        Z = Z[Z.ZXYR != 1e+32]
+        Z = Z.reset_index(drop=True)
 
-def getData(edi_file_path, medfiltsp, StSh=False):
+    if component == 'yx':
+        Z = Z[Z.ZYXR != 1e+32]
+        Z = Z.reset_index(drop=True)
+    
+    if component == 'det':
+        Z = Z[~((Z.ZXXR == 1e+32) | (Z.ZXYR == 1e+32)| (Z.ZYXR == 1e+32)| (Z.ZYYR == 1e+32))]
+        Z = Z.reset_index(drop=True)
+        
+    return Z
+
+
+
+def getData(edi_file_path, medfiltsp, inv_comp = 'det', StSh=False):
     
     # read edi file
     Z_orig, site_id, coord = readEDI(edi_file_path)
     
+    # remove masked data
+    Z_orig = remove_masked_data(Z_orig, component = inv_comp )
+
     # Conversion to appropriate units: we use ohms
     #   1 ohm = 10000(4*pi) [mV/km/nT]
     C = 10000/(4*np.pi)
@@ -407,9 +448,6 @@ def getData(edi_file_path, medfiltsp, StSh=False):
     ellip = ph_params[:,5]
     beta_err = ph_paramsERR[:,3]
     ellip_err = ph_paramsERR[:,4]
-
-    # Calculate determinant of Z and error 
-    ZdetR ,ZdetI, ZdetSd, ZdetLnSd = Zdet(Z)
     
     # Calculate differences between Zxy and Zyx
     difPol = abs(np.log(abs(Z['ZXYR']))-np.log(abs(Z['ZYXR']))) + abs(np.log(abs(Z['ZXYI']))-np.log(abs(Z['ZYXI'])))
@@ -423,13 +461,25 @@ def getData(edi_file_path, medfiltsp, StSh=False):
     ellipM = keepMax(ellip_filt)
     betaM = keepMax(beta_filt)
     difPolM = keepMax(difPol_filt)
+    
+    
+    if inv_comp == 'det':
+        # Calculate determinant of Z and error 
+        Z1DR ,Z1DI, Z1DSd, Z1DLnSd = Zdet(Z)
+        
+    elif inv_comp == 'xy':
+        Z1DR ,Z1DI, Z1DSd, Z1DLnSd = Zxy(Z)
+        
+    elif inv_comp == 'yx':
+        Z1DR ,Z1DI, Z1DSd, Z1DLnSd = Zyx(Z)
+
 
     # Create dataframes for inversion (data_inv) and general (data_Z)
-    df_inv = pd.DataFrame(columns=['freq','ZdetRLn','ZdetILn','ZdetLnSd','elipM','betaM','difPolM'])
+    df_inv = pd.DataFrame(columns=['freq','Z1DRLn','Z1DILn','Z1DLnSd','elipM','betaM','difPolM'])
     df_inv['freq'] = freq
-    df_inv['ZdetRLn'] = np.log(ZdetR)
-    df_inv['ZdetILn'] = np.log(ZdetI)
-    df_inv['ZdetLnSd'] = ZdetLnSd
+    df_inv['Z1DRLn'] = np.log(Z1DR)
+    df_inv['Z1DILn'] = np.log(Z1DI)
+    df_inv['Z1DLnSd'] = Z1DLnSd
     df_inv['elipM'] = ellipM
     df_inv['betaM'] = betaM
     if StSh:
@@ -567,10 +617,9 @@ def niblettBostick_depthTransform(rho, phy, T):
 
 
 def rms(obs_dat, resp):
-    
-    nfreq = obs_dat.shape[0]
-    msftRe = (obs_dat[:,1] - resp[:,0])**2 / obs_dat[:,3]**2
-    msftIm = (obs_dat[:,2] - resp[:,1])**2 / obs_dat[:,3]**2
-    msft = (np.sum(msftRe) + np.sum(msftIm))/(nfreq)
-    
-    return msft**0.5
+    residuals = np.r_[(obs_dat[:,1] - resp[:,0]), (obs_dat[:,2] - resp[:,1])]
+    std = np.r_[obs_dat[:,3],obs_dat[:,3]]
+    x2 = ((residuals/std)@(residuals/std).T) 
+    rms = (np.sqrt(x2 / len(residuals)))
+
+    return rms
