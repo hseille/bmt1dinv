@@ -23,7 +23,7 @@ __status__ = "Beta"
 # =============================================================================
 
 # specify project folder name
-project = 'oakdam'
+project = 'example'
 
 # componnent to invert for ('det', 'xy', 'yx')
 inv_comp = 'det'
@@ -52,6 +52,11 @@ saveCSVfiles = True
 #   could cause small but potentially relevant signal to be ignored.
 #   default = False
 StSh = False
+
+# option to generate .csv file for single .edi files
+# (set to None for using all available .edi files )
+site_ids = None
+#site_ids = ['065','078']
 
 # =============================================================================
 # 
@@ -90,9 +95,6 @@ print('##          CSIRO DEI FSP   2020           ##')
 print('#############################################\n')
 
 
-
-
-
 #read and store the tree attribute list 
 atts_dic = tree.readAttsFile(atts_file)
 
@@ -105,6 +107,9 @@ print('EDI files folder: ',edi_path)
 for root, dirs, files in os.walk(edi_path):
     for file in files:
         if file.endswith('.edi'):
+            if site_ids is not None:
+                if file[:-4] not in site_ids:
+                    continue
             edi_file = file
             print('\nMT site %s... '%edi_file)
             edi_file_path = r'%s/%s'%(root, edi_file)
@@ -127,6 +132,25 @@ for root, dirs, files in os.walk(edi_path):
 
             # Get covariance matrix
             C, ss = tree.getC(data_1D, tr)
+                
+            #  save CSV files for the inversion
+            if saveCSVfiles:
+                if EF < 0:
+                    df,ss = tree.exportForTransD(site_id,data_1D, 
+                                                 tr, errorfloor=-1,
+                                                 fcorr=False,
+                                                 min_errorfloor = min_errorfloor)
+                    df.to_csv(r'%s/%s.csv'%(csv_path,site_id),
+                              sep=',', index=False)
+
+                else:
+                    df,ss = tree.exportForTransD(site_id,data_1D, 
+                                                 tr, errorfloor=EF)
+                    df.to_csv('%s/%s.csv'%(csv_path,site_id),
+                                                   sep=',', index=False)
+                    
+                    print('    Input .csv file saved');
+
 
             # load and plot MT data
             if plotMTdata: 
@@ -142,22 +166,6 @@ for root, dirs, files in os.walk(edi_path):
                             bbox_inches="tight")
                 plt.close('all')
                 print('    Data plot saved');
+
                 
-            #  save CSV files for the inversion
-            if saveCSVfiles:
-                if EF < 0:
-                    df,ss = tree.exportForTransD(site_id,data_1D, 
-                                                 tr, errorfloor=-1,
-                                                 fcorr=False,
-                                                 min_errorfloor = min_errorfloor)
-                    df.to_csv(r'%s/%s.csv'%(csv_path,site_id),
-                              sep=',', index=False)
-
-                else:
-                    df,ss = tree.exportForTransD(site_id,data_1D, 
-                                                 tr, errorfloor=EF)
-                    df.to_csv('%s/%sEF%d.csv'%(csv_path,site_id,100*EF),
-                                                   sep=',', index=False)
-
-                print('    Input .csv file saved');
 

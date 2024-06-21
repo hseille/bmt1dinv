@@ -286,13 +286,13 @@ def medianFilter(freq, param, freq_sp):
     """
     Function that filters out outliers using a median filter ()
     """   
-    
+        
     param_filt = np.zeros(len(freq))
     # freq_sp = 0.5 # interval value (log10) where the points can be considered for calculating the median
     for f1, f1_val in enumerate(freq):
         paramMed = []
         if f1 == 0:         # consider 0 beyond the beginning extremity (lim->0 = 0)
-            paramMed = [0]
+            paramMed = [0,0,0]
         for f2, f2_val in enumerate(freq):
             if np.log10(f1_val)- freq_sp/2 < np.log10(f2_val) < np.log10(f1_val)+ freq_sp/2:
                 paramMed.append(param[f2])

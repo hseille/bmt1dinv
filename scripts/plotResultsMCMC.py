@@ -24,19 +24,25 @@ __status__ = "Beta"
 
 project = 'example'
 
-PlotModels = True
-if PlotModels:
+plotModels = True
+if plotModels:
     DepthMin = 0
     DepthMax = 1500
     DepthLogScale = False  # plt the depth in log scale
 
-PlotResponses = True
-if PlotResponses:
+plotResponses = True
+if plotResponses:
     plotResp_Z = False
 
-Plot_inversionStatistics = True
+plot_inversionStatistics = True
+plotConvergence = True
+combinePlots = True
 
 plot_niblettBostick = False
+
+# define the site_ids to plot (set to None for plotting all)
+site_ids = None
+#site_ids = ['065']
 
 
 # =============================================================================
@@ -66,24 +72,25 @@ import plotPDFs
 files_path = f'../projects/{project}/transdMT/outfolder'
 
 print('Project: ',project)
-print(' Plot models: ',PlotModels)
-print(' Plot responses: ',PlotResponses)
-print(' Plot inversion statistics: ', Plot_inversionStatistics)
+print(' Plot models: ',plotModels)
+print(' Plot responses: ',plotResponses)
+print(' Plot inversion statistics: ', plot_inversionStatistics)
 print(' Plot Niblett-Bostick depth-transform: ',plot_niblettBostick)
 
 
-site_ids = []
-for file in os.listdir(f'{files_path}/csv'):
-    if file.endswith(".csv") and not file.endswith("log.csv"):
-        site_ids.append(file[:-4])
-site_ids = np.sort(site_ids)
+if site_ids is None:
+    site_ids = []
+    for file in os.listdir(f'{files_path}/csv'):
+        if file.endswith(".csv") and not file.endswith("log.csv"):
+            site_ids.append(file[:-4])
+    site_ids = np.sort(site_ids)
 
 
 for site_id in site_ids:             
     
     print('\nMT site %s...'%site_id)
     
-    if PlotModels:
+    if plotModels:
         
         samp_models_file =f'{files_path}/samps/{site_id}_sampModels'
 
@@ -115,12 +122,7 @@ for site_id in site_ids:
         plt.close('all')
         
 
-
-
-    
-    
-    
-    if PlotResponses:
+    if plotResponses:
 
         #==============================================================================
         # # PDF RESPONSES
@@ -217,7 +219,7 @@ for site_id in site_ids:
     # # INVERSION STATISTICS
     #==============================================================================
 
-    if Plot_inversionStatistics:
+    if plot_inversionStatistics:
 
         
         
@@ -345,3 +347,15 @@ for site_id in site_ids:
 
         plt.savefig(f'{files_path}/plots/stats/{site_id}_stats.png',dpi=300, bbox_inches="tight")
         plt.close('all')
+        
+        
+if plotConvergence:
+    print(' ')
+    import monitorConvergence
+    monitorConvergence.plot(project, site_ids)
+    
+
+if combinePlots:
+    print(' ')
+    import combinePictures
+    combinePictures.plot(project, site_ids)
