@@ -16,7 +16,9 @@ Seillé, H., & Visser, G. (2020). Bayesian inversion of magnetotelluric data con
 
 ### Authors:
 Hoël Seillé (hoel.seille@csiro.au)
+
 Gerhard Visser (gerhard.visser@csiro.au)
+
 CSIRO Deep Earth Imaging FSP, 2020
 
 ### System Requirements:
