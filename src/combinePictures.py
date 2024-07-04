@@ -7,11 +7,11 @@ Created on Thu May 23 14:21:05 2024
 """
 
 
-def plot(project, site_ids, plotConvergence = True):
+def plot(project, site_ids, folder, plotConvergence = True):
     
     # project = 'example'
     
-    folder = f'../projects/{project}'
+    #folder = f'../projects/{project}'
     
     import os
     

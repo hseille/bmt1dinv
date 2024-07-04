@@ -22,20 +22,20 @@ __status__ = "Beta"
 # Define here the parameters and folders to create the results plots
 # =============================================================================
 
-project = 'example'
+project = 'oakdam'
 
-plotModels = True
+plotModels = False
 if plotModels:
     DepthMin = 0
     DepthMax = 1500
     DepthLogScale = False  # plt the depth in log scale
 
-plotResponses = True
+plotResponses = False
 if plotResponses:
     plotResp_Z = False
 
-plot_inversionStatistics = True
-plotConvergence = True
+plot_inversionStatistics = False
+plotConvergence = False
 combinePlots = True
 
 plot_niblettBostick = False
@@ -69,7 +69,8 @@ import ensembles
 import MT 
 import plotPDFs
 
-files_path = f'../projects/{project}/transdMT/outfolder'
+#files_path = f'../projects/{project}/transdMT/outfolder'
+files_path = '/Volumes/work/projects/MT/oakdam/oakdam_new_ipfile/transdMT/outfolder/'
 
 print('Project: ',project)
 print(' Plot models: ',plotModels)
@@ -352,10 +353,11 @@ for site_id in site_ids:
 if plotConvergence:
     print(' ')
     import monitorConvergence
-    monitorConvergence.plot(project, site_ids)
+    monitorConvergence.plot(project, site_ids, files_path)
     
 
 if combinePlots:
     print(' ')
     import combinePictures
-    combinePictures.plot(project, site_ids)
+    files_path = '/Volumes/work/projects/MT/oakdam/oakdam_new_ipfile/'
+    combinePictures.plot(project, site_ids, files_path)

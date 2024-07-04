@@ -16,7 +16,7 @@ __status__ = "Beta"
 
 
 
-def plot(project, site_ids):
+def plot(project, site_ids, files_path):
     
     # =============================================================================
     # Define here the project
@@ -41,7 +41,7 @@ def plot(project, site_ids):
     import ensembles
     
     
-    files_path = f'../projects/{project}/transdMT/outfolder'
+    #files_path = f'../projects/{project}/transdMT/outfolder'
     
     # site_ids = []
     # for file in os.listdir(f'{files_path}/csv'):

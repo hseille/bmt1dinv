@@ -1,5 +1,10 @@
 # BMT1Dinv: 1D Trans-dimensional MCMC inversion of magnetotelluric data considering model discrepancy
 
+### Home Page: 
+https://bitbucket.csiro.au/scm/~sei029/bmt1dinv.git
+https://data.csiro.au/collection/csiro:51942v2
+
+
 ### Description:
 BMT1Dinv is a software for analysing, inverting and vizualizing magnetotelluric (MT) data and probabilistic models.  
 In consists in a C executable wrapped around several python scripts. The C executable performs the MCMC inversion, the python scripts calculates the 1D modelling assumption errors, create and reads the input/output files. 
@@ -7,9 +12,6 @@ In consists in a C executable wrapped around several python scripts. The C execu
 ### How to Cite:
 If you use this software in a scientific publication, please cite the following publication:
 Seillé, H., & Visser, G. (2020). Bayesian inversion of magnetotelluric data considering dimensionality discrepancies. Geophysical Journal International, 223(3), 1565–1583. https://doi.org/10.1093/gji/ggaa391
-
-### Home Page: 
-https://bitbucket.csiro.au/scm/~sei029/bmt1dinv.git
 
 ### Authors:
 Hoël Seillé (hoel.seille@csiro.au)

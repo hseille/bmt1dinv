@@ -23,7 +23,7 @@ __status__ = "Beta"
 # =============================================================================
 
 # specify project folder name
-project = 'example'
+project = 'oakdam'
 
 # componnent to invert for ('det', 'xy', 'yx')
 inv_comp = 'det'
@@ -32,7 +32,7 @@ inv_comp = 'det'
 #   -1 indicates that dimensionality errors will be used:   EF = -1
 #   otherwise it uses the value specified                   EF = 0.05
 EF = -1
-# EF = 0.05
+EF = 0.02
 # Define a minimum error floor to apply to the data when dimensionality errors are used
 min_errorfloor = 0.01
 
@@ -41,7 +41,7 @@ min_errorfloor = 0.01
 # the estimation of dimensionality errors. It prevents to have noisy points assiging
 # large errors to the data
 # medfiltsp = 0.5 => median filter along half a frequency decade
-medfiltsp = 0.5
+medfiltsp = 1.0
 
 # options to plot the data and create the csv files needed for the inversion
 plotMTdata = True
@@ -56,7 +56,14 @@ StSh = False
 # option to generate .csv file for single .edi files
 # (set to None for using all available .edi files )
 site_ids = None
-#site_ids = ['065','078']
+site_ids = ['2-O28A',
+            '2-N35A',
+            '2-P285A',
+            'RS29B',
+            '2-O35A',
+            '2-P30B',
+            '2-U32B',
+            '2-U34B']
 
 # =============================================================================
 # 
