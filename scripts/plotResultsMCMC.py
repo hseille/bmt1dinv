@@ -39,10 +39,13 @@ plotConvergence = False
 combinePlots = True
 
 plot_niblettBostick = False
+<<<<<<< HEAD
 
 # define the site_ids to plot (set to None for plotting all)
 site_ids = None
 #site_ids = ['065']
+=======
+>>>>>>> 94e6b9a27036b8653760ce5fa8fa6112c6763d9e
 
 
 # =============================================================================
@@ -69,8 +72,12 @@ import ensembles
 import MT 
 import plotPDFs
 
+<<<<<<< HEAD
 #files_path = f'../projects/{project}/transdMT/outfolder'
 files_path = '/Volumes/work/projects/MT/oakdam/oakdam_new_ipfile/transdMT/outfolder/'
+=======
+files_path = f'../projects/{project}/transdMT/outfolder'
+>>>>>>> 94e6b9a27036b8653760ce5fa8fa6112c6763d9e
 
 print('Project: ',project)
 print(' Plot models: ',plotModels)
@@ -79,12 +86,20 @@ print(' Plot inversion statistics: ', plot_inversionStatistics)
 print(' Plot Niblett-Bostick depth-transform: ',plot_niblettBostick)
 
 
+<<<<<<< HEAD
 if site_ids is None:
     site_ids = []
     for file in os.listdir(f'{files_path}/csv'):
         if file.endswith(".csv") and not file.endswith("log.csv"):
             site_ids.append(file[:-4])
     site_ids = np.sort(site_ids)
+=======
+site_ids = []
+for file in os.listdir(f'{files_path}/csv'):
+    if file.endswith(".csv") and not file.endswith("log.csv"):
+        site_ids.append(file[:-4])
+site_ids = np.sort(site_ids)
+>>>>>>> 94e6b9a27036b8653760ce5fa8fa6112c6763d9e
 
 
 for site_id in site_ids:             

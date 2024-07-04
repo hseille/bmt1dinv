@@ -32,7 +32,11 @@ inv_comp = 'det'
 #   -1 indicates that dimensionality errors will be used:   EF = -1
 #   otherwise it uses the value specified                   EF = 0.05
 EF = -1
+<<<<<<< HEAD
 EF = 0.02
+=======
+# EF = 0.05
+>>>>>>> 94e6b9a27036b8653760ce5fa8fa6112c6763d9e
 # Define a minimum error floor to apply to the data when dimensionality errors are used
 min_errorfloor = 0.01
 
@@ -175,4 +179,24 @@ for root, dirs, files in os.walk(edi_path):
                 print('    Data plot saved');
 
                 
+<<<<<<< HEAD
+=======
+            #  save CSV files for the inversion
+            if saveCSVfiles:
+                if EF < 0:
+                    df,ss = tree.exportForTransD(site_id,data_1D, 
+                                                 tr, errorfloor=-1,
+                                                 fcorr=False,
+                                                 min_errorfloor = min_errorfloor)
+                    df.to_csv(r'%s/%s.csv'%(csv_path,site_id),
+                              sep=',', index=False)
+
+                else:
+                    df,ss = tree.exportForTransD(site_id,data_1D, 
+                                                 tr, errorfloor=EF)
+                    df.to_csv('%s/%sEF%d.csv'%(csv_path,site_id,100*EF),
+                                                   sep=',', index=False)
+
+                print('    Input .csv file saved');
+>>>>>>> 94e6b9a27036b8653760ce5fa8fa6112c6763d9e
 
