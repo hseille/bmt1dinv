@@ -1,7 +1,7 @@
 # BMT1Dinv: 1D Trans-dimensional MCMC inversion of magnetotelluric data considering model discrepancy
 
 ### Home Page: 
-https://bitbucket.csiro.au/scm/~sei029/bmt1dinv.git
+https://bitbucket.csiro.au/scm/~sei029/bmt1dinv.git
 
 https://data.csiro.au/collection/csiro:51942v2
 
