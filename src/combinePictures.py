@@ -6,22 +6,10 @@ Created on Thu May 23 14:21:05 2024
 @author: sei029
 """
 
+import os
 
 def plot(project, site_ids, folder, plotConvergence = True):
-    
-    # project = 'example'
-    
-    #folder = f'../projects/{project}'
-    
-    import os
-    
-    # # extract site names
-    # site_ids = []
-    # for file in os.listdir(f'{folder}/transdMT/outfolder/csv'):
-    #     if file.endswith(".csv") and not file.endswith("log.csv"):
-    #         site_ids.append(file[:-4])
-    
-    
+
     def combine(site_id, folder):
         
         from PIL import Image

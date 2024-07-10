@@ -1,16 +1,6 @@
 number_of_chains_running_in_parallel=5
-<<<<<<< HEAD
-<<<<<<<< HEAD:projects/example/transdMT/inversionParameters.txt
 total_number_of_chains=10
 iterations_per_chain=100000
-========
-total_number_of_chains=40
-iterations_per_chain=1000000
->>>>>>>> 94e6b9a27036b8653760ce5fa8fa6112c6763d9e:projects/empty_project/transdMT/inversionParameters.txt
-=======
-total_number_of_chains=40
-iterations_per_chain=1000000
->>>>>>> 94e6b9a27036b8653760ce5fa8fa6112c6763d9e
 ipfile=ipfile.csv
 gamma=2
 samples_per_chain=100

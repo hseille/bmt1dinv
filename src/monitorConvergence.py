@@ -17,18 +17,7 @@ __status__ = "Beta"
 
 
 def plot(project, site_ids, files_path):
-    
-    # =============================================================================
-    # Define here the project
-    # =============================================================================
-    
-    # project = 'example'
-    
-    # =============================================================================
-    # 
-    # =============================================================================
-    
-    
+
     
     import pandas as pd
     import matplotlib.pyplot as plt
@@ -39,16 +28,6 @@ def plot(project, site_ids, files_path):
     
     sys.path.append("../src")
     import ensembles
-    
-    
-    #files_path = f'../projects/{project}/transdMT/outfolder'
-    
-    # site_ids = []
-    # for file in os.listdir(f'{files_path}/csv'):
-    #     if file.endswith(".csv") and not file.endswith("log.csv"):
-    #         site_ids.append(file[:-4])
-    # site_ids = np.sort(site_ids)
-    
     
     params_file = f'../projects/{project}/transdMT/inversionParameters.txt'
     nChains, nIt, samples_perChain, rhoMin, rhoMax = ensembles.read_invParams(params_file)

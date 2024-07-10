@@ -367,15 +367,6 @@ def read_invParams(params_file):
     
     return nChains, nIt, samples_perChain, rhoMin, rhoMax
 
-# class inv(object):
-#     def __init__(self,params_file):
-#         with open(params_file) as f:
-#             lines = f.readlines()
-#         self.nChains = int(lines[1].split('=')[1][:-1])
-#         self.nIt = int(lines[2].split('=')[1][:-1])
-#         self.samples_perChain = int(lines[5].split('=')[1][:-1])
-#         self.rhoMin = int(lines[7].split('=')[1][:-1])
-#         self.rhoMax = int(lines[8].split('=')[1][:-1])
         
 
     
